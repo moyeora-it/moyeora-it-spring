@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: moyeora-it-spring
+
+
+  jpa:
+    hibernate:
+      ddl-auto: none # 필요시 update/create 등으로 변경
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
