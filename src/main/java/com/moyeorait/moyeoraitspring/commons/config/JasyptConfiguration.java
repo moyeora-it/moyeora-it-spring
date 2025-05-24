@@ -1,5 +1,7 @@
-package com.moyeorait.moyeoraitspring.commons;
+package com.moyeorait.moyeoraitspring.commons.config;
 
+import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
+import com.ulisesbocchio.jasyptspringboot.encryptor.DefaultLazyEncryptor;
 import org.jasypt.encryption.StringEncryptor;
 import org.jasypt.encryption.pbe.PooledPBEStringEncryptor;
 import org.jasypt.encryption.pbe.config.SimpleStringPBEConfig;
@@ -8,12 +10,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@EnableEncryptableProperties
 public class JasyptConfiguration {
 
-    @Value("${jasypt.encryptor.password")
+    @Value("${jasypt.encryptor.password}")
     private String password;
 
-    @Bean("jasyptStringEcryptor")
+    @Bean("jasyptStringEncryptor")
     public StringEncryptor stringEncryptor(){
         PooledPBEStringEncryptor encryptor = new PooledPBEStringEncryptor();
         SimpleStringPBEConfig config = new SimpleStringPBEConfig();

@@ -30,8 +30,9 @@ class JasyptConfigurationTest {
         String target = "target";
 
         String encryptResult = this.jasyptEncrypt(target);
+        System.out.println("encryptResult : " + encryptResult);
         String decryptResult = this.jasyptDecrypt(encryptResult);
-        assertThat(decryptResult).isEqualTo(1);
+        assertThat(decryptResult).isEqualTo(target);
 
     }
 }
