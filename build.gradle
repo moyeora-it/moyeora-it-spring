@@ -55,7 +55,7 @@ dependencies {
 tasks.bootJar {
     archiveBaseName.set("moyeorait")  // JAR 이름
     archiveVersion.set("0.0.1")      // 버전
-    mainClass.set("com.moyeorait.moyeoraitspring")
+    mainClass.set("com.moyeorait.moyeoraitspring.MoyeoraItSpringApplication")
 }
 tasks.jar {
     enabled = false
