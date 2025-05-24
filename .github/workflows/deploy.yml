@@ -50,5 +50,5 @@ jobs:
             sudo docker rm moyeoraitspring || true
             sudo docker ps
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/moyeoraitspring
-            sudo docker run -d -p 8080:8080 -e DB_URL="${{ secrets.DB_URL }}" -e DB_USERNAME="${{ secrets.DB_USERNAME }}" -e DB_PASSWORD="${{ secrets.DB_PASSWORD }}" -e spring.profiles.active="prod" -e jasypt.encryptor.password="moyeoraitkey0214" --name moyeoraitspring ${{ secrets.DOCKER_USERNAME }}/moyeoraitspring
+            sudo docker run -d -p 8080:8080 -e spring.profiles.active="prod" -e jasypt.encryptor.password="moyeoraitkey0214" --name moyeoraitspring ${{ secrets.DOCKER_USERNAME }}/moyeoraitspring
             sudo docker image prune -f
