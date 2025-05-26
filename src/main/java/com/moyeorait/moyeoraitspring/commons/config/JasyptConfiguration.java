@@ -6,11 +6,13 @@ import org.jasypt.encryption.StringEncryptor;
 import org.jasypt.encryption.pbe.PooledPBEStringEncryptor;
 import org.jasypt.encryption.pbe.config.SimpleStringPBEConfig;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @EnableEncryptableProperties
+//@ConditionalOnProperty(name = "jasypt.enable", havingValue = "true", matchIfMissing = true)
 public class JasyptConfiguration {
 
     @Value("${jasypt.encryptor.password}")
