@@ -9,22 +9,21 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Converter
-public class SkillListConverter implements AttributeConverter<List<Skill>, String> {
-
-    private static final String DELIMITER = ",";
+public class SkillListConverter implements AttributeConverter<List<Skill>, String[]> {
 
     @Override
-    public String convertToDatabaseColumn(List<Skill> attribute) {
-        if(attribute == null || attribute.isEmpty()) return null;
-        else return attribute.stream().map(Enum::name).collect(Collectors.joining(DELIMITER));
+    public String[] convertToDatabaseColumn(List<Skill> attribute) {
+        if(attribute == null || attribute.isEmpty()) return new String[0];
+        else return attribute.stream()
+                .map(Skill::name) // enum → string
+                .toArray(String[]::new);
     }
 
     @Override
-    public List<Skill> convertToEntityAttribute(String dbData) {
-        if(dbData == null || dbData.isEmpty()) return List.of();
-        else return Arrays.stream(dbData.split(DELIMITER))
-                .map(String::trim)
-                .map(Skill::valueOf)
+    public List<Skill> convertToEntityAttribute(String[] dbData) {
+        if(dbData == null || dbData.length == 0) return List.of();
+        else return Arrays.stream(dbData)
+                .map(Skill::valueOf) // string → enum
                 .collect(Collectors.toList());
     }
 }

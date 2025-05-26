@@ -301,3 +301,9 @@ CREATE TABLE waiting_list (
 	CONSTRAINT waiting_list_group_id_fkey FOREIGN KEY (group_id) REFERENCES "group"(id) ON DELETE SET NULL ON UPDATE CASCADE,
 	CONSTRAINT waiting_list_user_id_fkey FOREIGN KEY (user_id) REFERENCES "user"(id) ON DELETE SET NULL ON UPDATE CASCADE
 );
+
+-- =========================================================
+
+ALTER TABLE "user"
+ALTER COLUMN skills TYPE TEXT
+USING array_to_string(skills, ',');

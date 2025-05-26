@@ -7,6 +7,8 @@ import com.moyeorait.moyeoraitspring.domain.group.repository.converter.SkillList
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,6 +34,7 @@ public class User {
     private String profileImage;
 
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     private Provider provider;
 
     @Column(name = "provider_id")
@@ -48,10 +51,13 @@ public class User {
 
     @Column(name = "position")
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     private Position position;
 
-    @Convert(converter = SkillListConverter.class)
-    private List<Skill> skills;
+    @JdbcTypeCode(SqlTypes.ARRAY)
+    @Column(name = "skills", columnDefinition = "text[]")
+    private List<String> skills;
+
 
     @Column(name = "email_authentication")
     private Integer emailAuthentication;

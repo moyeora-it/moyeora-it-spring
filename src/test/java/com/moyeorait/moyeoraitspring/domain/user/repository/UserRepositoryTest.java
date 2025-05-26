@@ -38,7 +38,7 @@ class UserRepositoryTest {
         user.setUpdatedAt(LocalDateTime.now());
         user.setIsDeleted(false);
         user.setPosition(Position.BE);
-        user.setSkills(List.of(Skill.Java, Skill.Spring));
+        user.setSkills(List.of("Java", "Spring"));
         user.setEmailAuthentication(1);
 
         User saved = userRepository.save(user);
