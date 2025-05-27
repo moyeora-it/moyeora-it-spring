@@ -1,2 +1,10 @@
 - 모임 생성 시 type의 중복 가능은 여러개 선택이 가능하다는 의미?
 - 모임 생성시 description은 content와 동일한가?
+- 모임 생성 시 생성일자는 필요없을듯?
+
+
+- node 요청 진행시
+- webconfig
+- securityconfig
+- LoginUserArgumentResolver
+- jwtFilter

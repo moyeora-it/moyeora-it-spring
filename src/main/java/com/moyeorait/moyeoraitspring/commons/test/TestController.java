@@ -9,7 +9,6 @@ public class TestController {
 
     @GetMapping("/test")
     public String test(){
-        throw new CustomException(TestException.TEST);
-//        return "test";
+        return "test";
     }
 }

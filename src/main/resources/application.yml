@@ -13,3 +13,7 @@ spring:
       host: localhost
       port: 6379
       password: 10000
+logging:
+  level:
+    root: info
+    com.moyeorait.moyeoraitspring: debug
