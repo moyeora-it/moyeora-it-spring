@@ -307,3 +307,7 @@ CREATE TABLE waiting_list (
 ALTER TABLE "user"
 ALTER COLUMN skills TYPE TEXT
 USING array_to_string(skills, ',');
+
+alter table "group"
+alter column skills type text[]
+USING skills::TEXT[];

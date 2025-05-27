@@ -1,5 +1,7 @@
 package com.moyeorait.moyeoraitspring.domain.user.repository;
 
+import com.moyeorait.moyeoraitspring.commons.config.JpaConfig;
+import com.moyeorait.moyeoraitspring.commons.entity.BaseTimeEntity;
 import com.moyeorait.moyeoraitspring.commons.enumdata.Position;
 import com.moyeorait.moyeoraitspring.commons.enumdata.Provider;
 import com.moyeorait.moyeoraitspring.commons.enumdata.Skill;
@@ -7,8 +9,13 @@ import com.moyeorait.moyeoraitspring.domain.group.repository.converter.SkillList
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Imported;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+import org.springframework.context.annotation.Import;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,7 +24,7 @@ import java.util.List;
 @Table(name = "\"user\"") // 예약어 보호용
 @Getter
 @Setter
-public class User {
+public class User extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,13 +47,8 @@ public class User {
     @Column(name = "provider_id")
     private String providerId;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
 
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-
-    @Column(name = "is_deleted")
+    @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted;
 
     @Column(name = "position")
@@ -61,4 +63,6 @@ public class User {
 
     @Column(name = "email_authentication")
     private Integer emailAuthentication;
+
+
 }

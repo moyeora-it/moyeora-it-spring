@@ -1,5 +1,6 @@
 package com.moyeorait.moyeoraitspring.domain.user.repository;
 
+import com.moyeorait.moyeoraitspring.commons.config.JpaConfig;
 import com.moyeorait.moyeoraitspring.commons.enumdata.Position;
 import com.moyeorait.moyeoraitspring.commons.enumdata.Provider;
 import com.moyeorait.moyeoraitspring.commons.enumdata.Skill;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 
 import java.time.LocalDateTime;
@@ -19,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @TestPropertySource(locations = "classpath:application.yml")
+@Import(JpaConfig.class)
 class UserRepositoryTest {
 
     @Autowired
@@ -34,8 +37,6 @@ class UserRepositoryTest {
         user.setProfileImage("https://example.com/image.jpg");
         user.setProvider(Provider.KAKAO);
         user.setProviderId(null);
-        user.setCreatedAt(LocalDateTime.now());
-        user.setUpdatedAt(LocalDateTime.now());
         user.setIsDeleted(false);
         user.setPosition(Position.BE);
         user.setSkills(List.of("Java", "Spring"));

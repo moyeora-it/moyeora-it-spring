@@ -5,8 +5,8 @@ import lombok.Getter;
 
 @Getter
 public enum TestException implements ExceptionInterface {
-    TEST(40000, "testException")
-
+    TEST(40000, "testException"),
+    UNAUTHORIZE(40001, "로그인이 필요합니다.")
     ;
 
     private final int code;
