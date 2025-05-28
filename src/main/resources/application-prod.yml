@@ -2,14 +2,14 @@ spring:
   application:
     name: moyeora-it-spring
   datasource:
-    url: ENC()
-    username: ENC()
-    password: ENC()
+    url: ENC(J+3/ZFV3o3wH0VjaJwELogjDYynhxcWogGgduzlV/Ajlm8bM4u9NmGYBvphhPqvl)
+    username: ENC(QQ7RobywWoHRedGnohJW4Q==)
+    password: ENC(WEogSh3Lg9YuQtge8SGv4uz2hVM3e8gJ)
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
-      ddl-auto: none # 필요시 update/create 등으로 변경
+      ddl-auto: create # 필요시 update/create 등으로 변경
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect

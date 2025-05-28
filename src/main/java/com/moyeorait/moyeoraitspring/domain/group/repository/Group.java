@@ -36,6 +36,9 @@ public class Group extends BaseTimeEntity {
     @Column(name = "auto_allow")
     private Boolean autoAllow;
 
+    @Column(name = "current_participants")
+    private Integer currentParticipants;
+
     @Column(name = "max_participants")
     private Integer maxParticipants;
 
