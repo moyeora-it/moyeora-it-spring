@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -16,6 +18,7 @@ import java.time.LocalDateTime;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @TestPropertySource(locations = "classpath:application.yml")
 @Import(JpaConfig.class)
+@ActiveProfiles("test")
 class GroupRepositoryTest {
 
     @Autowired
@@ -32,6 +35,7 @@ class GroupRepositoryTest {
         group.setContent("테스트내용");
         group.setUserId(1L);
         group.setAutoAllow(true);
+        group.setCurrentParticipants(0);
         group.setMaxParticipants(3);
         group.setStatus(true);
         group.setType("타입");
@@ -42,7 +46,7 @@ class GroupRepositoryTest {
 
         //when
         Group saveGroup = groupRepository.save(group);
-        Group findGroup = groupRepository.findById(saveGroup.getUserId()).get();
+        Group findGroup = groupRepository.findById(saveGroup.getGroupId()).get();
 
         //then
         Assertions.assertThat(saveGroup.getTitle()).isEqualTo(findGroup.getTitle());

@@ -24,7 +24,7 @@ public class Group extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer groupId;
+    private Long groupId;
 
     @Column(name = "title", nullable = false)
     private String title;
