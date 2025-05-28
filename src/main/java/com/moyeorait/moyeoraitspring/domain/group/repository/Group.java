@@ -4,7 +4,6 @@ import com.moyeorait.moyeoraitspring.commons.config.JpaConfig;
 import com.moyeorait.moyeoraitspring.commons.entity.BaseTimeEntity;
 import com.moyeorait.moyeoraitspring.commons.enumdata.Position;
 import com.moyeorait.moyeoraitspring.commons.enumdata.Skill;
-import com.moyeorait.moyeoraitspring.domain.user.repository.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,10 +24,28 @@ public class Group extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Integer groupId;
 
     @Column(name = "title", nullable = false)
     private String title;
+
+    private String content;
+
+    private Long userId;
+
+    @Column(name = "auto_allow")
+    private Boolean autoAllow;
+
+    @Column(name = "max_participants")
+    private Integer maxParticipants;
+
+    private Boolean status;
+
+
+    @Column(name = "type")
+    private String type;
+
+    private Integer views;
 
     @Column(name = "deadline", nullable = false)
     private LocalDateTime deadline;
@@ -36,35 +53,11 @@ public class Group extends BaseTimeEntity {
     @Column(name = "start_date")
     private LocalDateTime startDate;
 
-    private String content;
 
     @Column(name = "end_date")
     private LocalDateTime endDate;
 
-    @Column(name = "max_participants")
-    private Integer maxParticipants;
 
-    @Column(name = "positions")
-    @Enumerated(EnumType.STRING)
-    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
-    private Position positions;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "first_user_id")
-    private User firstUserId;
-
-    private Integer views;
-
-    @JdbcTypeCode(SqlTypes.ARRAY)
-    @Column(name = "skills", columnDefinition = "text[]")
-    private List<String> skills;
-
-    @Column(name = "type")
-    private String type;
-
-    private Boolean status;
-
-    @Column(name = "auto_allow")
-    private Boolean autoAllow;
 
 }

@@ -1,8 +1,6 @@
 package com.moyeorait.moyeoraitspring.domain.group.repository;
 
 import com.moyeorait.moyeoraitspring.commons.config.JpaConfig;
-import com.moyeorait.moyeoraitspring.domain.user.repository.User;
-import com.moyeorait.moyeoraitspring.domain.user.repository.UserRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,38 +21,38 @@ class GroupRepositoryTest {
     @Autowired
     private GroupRepository groupRepository;
 
-    @Autowired
-    private UserRepository userRepository;
 
     @Test
     @DisplayName("스터디, 모임 생성 및 조회")
     void createGroup(){
-        User user = new User();
-        user.setNickname("test");
-        user.setIsDeleted(false);
-        User saved = userRepository.save(user);
 
+        // given
         Group group = new Group();
         group.setTitle("테스트모임");
+        group.setContent("테스트내용");
+        group.setUserId(1L);
+        group.setAutoAllow(true);
+        group.setMaxParticipants(3);
+        group.setStatus(true);
+        group.setType("타입");
+        group.setViews(4);
         group.setDeadline(LocalDateTime.now());
         group.setStartDate(LocalDateTime.now());
-        group.setContent("테스트내용");
         group.setEndDate(LocalDateTime.now());
-        group.setMaxParticipants(3);
-        group.setViews(4);
-        group.setType("타입");
-        group.setStatus(true);
-        group.setAutoAllow(true);
-        group.setFirstUserId(saved);
 
-
+        //when
         Group saveGroup = groupRepository.save(group);
+        Group findGroup = groupRepository.findById(saveGroup.getUserId()).get();
 
-        Group findGroup = groupRepository.findById(saveGroup.getId()).get();
-
+        //then
         Assertions.assertThat(saveGroup.getTitle()).isEqualTo(findGroup.getTitle());
     }
 
+    @Test
+    @DisplayName("모임 상세 조회")
+    void findGroupInfo(){
+
+    }
 
 
 }

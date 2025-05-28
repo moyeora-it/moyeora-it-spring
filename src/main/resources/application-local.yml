@@ -2,16 +2,16 @@ spring:
   application:
     name: moyeora-it-spring
   datasource:
-    url: ENC(s8/JFmzG8JpoUUWRo3Is9IOEk+1OmfqoTOYAqUfDfGCczGi4z25GlSjrDt1PMsWQ5eSQr9yv04U=)
-    username: ENC(Y2Y15CjTPTV6pfl9mnpX5ZqUwSsAImUl)
-    password: ENC(8rCAUfAF/Y27zxSayg91Xiitvb+0ycfS)
-    driver-class-name: org.postgresql.Driver
+    url: "jdbc:mysql://localhost:3306/moyedb"
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
-      ddl-auto: none # 필요시 update/create 등으로 변경
+      ddl-auto: create # 필요시 update/create 등으로 변경
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+        dialect: org.hibernate.dialect.MySQL8Dialect
         format_sql: true
     show-sql: true
