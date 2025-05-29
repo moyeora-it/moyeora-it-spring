@@ -1,6 +1,7 @@
 package com.moyeorait.moyeoraitspring.domain.group.repository;
 
 import com.moyeorait.moyeoraitspring.commons.entity.BaseTimeEntity;
+import com.moyeorait.moyeoraitspring.domain.group.controller.request.CreateGroupRequest;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -55,6 +56,18 @@ public class Group extends BaseTimeEntity {
     private LocalDateTime endDate;
 
 
-
-
+    public Group(CreateGroupRequest request, Long userId) {
+        this.title = request.getTitle();
+        this.content = request.getDescription();
+        this.userId = userId;
+        this.autoAllow = request.isAutoAllow();
+        this.currentParticipants = 1;
+        this.maxParticipants = request.getMaxParticipants();
+        this.status = true;
+        this.type = request.getType();
+        this.views = 0;
+        this.deadline = request.getDeadLine();
+        this.startDate = request.getStartDate();
+        this.endDate = request.getEndDate();
+    }
 }

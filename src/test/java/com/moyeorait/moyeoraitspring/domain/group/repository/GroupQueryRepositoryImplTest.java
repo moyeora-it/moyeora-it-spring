@@ -7,6 +7,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@Transactional
 class GroupQueryRepositoryImplTest {
 
     @Autowired
@@ -42,10 +44,7 @@ class GroupQueryRepositoryImplTest {
                 .type(List.of("ALL")).build();
 
         List<Group> result = groupQueryRepository.searchGroup(condition);
-        for(Group group : result){
-            System.out.println("group : " + group);
-        }
-        Assertions.assertThat(result).isEqualTo(4);
+        Assertions.assertThat(result.size()).isEqualTo(4);
 
     }
     private Group createGroupInstance(String title, String content, Long userId, String type){

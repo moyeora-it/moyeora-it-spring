@@ -1,5 +1,6 @@
 package com.moyeorait.moyeoraitspring.domain.group.controller.request;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -8,6 +9,7 @@ import java.util.List;
 
 @Getter
 @ToString
+@AllArgsConstructor
 public class CreateGroupRequest {
     String title;
     LocalDateTime deadLine;
@@ -17,7 +19,7 @@ public class CreateGroupRequest {
     String description;
     List<String> position;
     List<String> skills;
-    List<String> type;
+    String type;
     boolean autoAllow;
 
 }

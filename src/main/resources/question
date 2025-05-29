@@ -1,5 +1,6 @@
 - 모임 조회 시 bookmark는 타입과 분리하여야함.
--
+- 모임 생성 시 createdAt은 필요없음
+- 모임 생성 시 반환값은 필요없는가?
 
 - node 요청 진행시
 - webconfig

@@ -4,6 +4,7 @@ import com.moyeorait.moyeoraitspring.commons.entity.BaseTimeEntity;
 import com.moyeorait.moyeoraitspring.domain.group.repository.Group;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -11,6 +12,7 @@ import lombok.ToString;
 @ToString
 @Getter
 @Setter
+@NoArgsConstructor
 public class Participant extends BaseTimeEntity{
 
     @Id
@@ -22,4 +24,9 @@ public class Participant extends BaseTimeEntity{
     private Group group;
 
     private Long userId;
+
+    public Participant(Group saveGroup, Long userId) {
+        this.group = saveGroup;
+        this.userId = userId;
+    }
 }
