@@ -14,9 +14,17 @@ public class ParticipantService {
     ParticipantRepository participantRepository;
 
     public void addUserToGroup(Group group, Long userId) {
+        group.setCurrentParticipants(group.getCurrentParticipants() + 1);
         Participant participant = new Participant(group, userId);
         participantRepository.save(participant);
+    }
 
+    public Participant findByGroupAndUserId(Group group, Long userId) {
+        Participant participant = participantRepository.findByGroupAndUserId(group, userId);
+        return participant;
+    }
 
+    public void deleteParticipant(Participant participant) {
+        participantRepository.delete(participant);
     }
 }

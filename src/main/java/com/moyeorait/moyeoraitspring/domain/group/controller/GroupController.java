@@ -52,6 +52,14 @@ public class GroupController {
         return ApiResponse.success();
     }
 
+    @DeleteMapping("/{groupId}/applications")
+    public ApiResponse<Void> leaveRequestGroup(@PathVariable Long groupId){
+        Long userId = 1L;
+        groupJoinManager.cancelRequest(groupId, userId);
+
+        return ApiResponse.success();
+    }
+
     //팀원 목록 보여주기
 //    @PostMapping("/{groupId}/participants")
 //    public ApiResponse<>

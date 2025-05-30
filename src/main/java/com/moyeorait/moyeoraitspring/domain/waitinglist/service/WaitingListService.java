@@ -17,4 +17,13 @@ public class WaitingListService {
         WaitingList waitingList = new WaitingList(group, userId);
         waitingListRepository.save(waitingList);
     }
+
+    public WaitingList findByGroupAndUserId(Group group, Long userId) {
+        WaitingList waitingList = waitingListRepository.findByGroupAndUserId(group, userId);
+        return waitingList;
+    }
+
+    public void deleteWaitingList(WaitingList waitingList) {
+        waitingListRepository.delete(waitingList);
+    }
 }

@@ -69,4 +69,8 @@ public class GroupService {
 
         return result;
     }
+
+    public Group findById(Long groupId) {
+        return groupRepository.findById(groupId).get();
+    }
 }

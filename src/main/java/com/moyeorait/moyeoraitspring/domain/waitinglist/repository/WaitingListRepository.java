@@ -8,5 +8,7 @@ import org.springframework.stereotype.Repository;
 public interface WaitingListRepository extends JpaRepository<WaitingList, Long> {
 
     int deleteByGroupAndUserId(Group group, Long currentUserId);
+
+    WaitingList findByGroupAndUserId(Group group, Long userId);
 }
 
