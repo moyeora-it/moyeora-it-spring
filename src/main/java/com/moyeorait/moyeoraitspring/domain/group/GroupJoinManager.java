@@ -2,6 +2,7 @@ package com.moyeorait.moyeoraitspring.domain.group;
 
 import com.moyeorait.moyeoraitspring.commons.exception.CustomException;
 import com.moyeorait.moyeoraitspring.commons.test.TestException;
+import com.moyeorait.moyeoraitspring.domain.group.controller.request.JoinManageRequest;
 import com.moyeorait.moyeoraitspring.domain.group.exception.GroupException;
 import com.moyeorait.moyeoraitspring.domain.group.repository.Group;
 import com.moyeorait.moyeoraitspring.domain.group.repository.GroupRepository;
@@ -9,6 +10,7 @@ import com.moyeorait.moyeoraitspring.domain.group.service.GroupService;
 import com.moyeorait.moyeoraitspring.domain.participant.ParticipantRepository;
 import com.moyeorait.moyeoraitspring.domain.participant.repository.Participant;
 import com.moyeorait.moyeoraitspring.domain.participant.service.ParticipantService;
+import com.moyeorait.moyeoraitspring.domain.user.UserService;
 import com.moyeorait.moyeoraitspring.domain.waitinglist.repository.WaitingList;
 import com.moyeorait.moyeoraitspring.domain.waitinglist.repository.WaitingListRepository;
 import com.moyeorait.moyeoraitspring.domain.waitinglist.service.WaitingListService;
@@ -27,6 +29,8 @@ public class GroupJoinManager {
 
     @Autowired
     WaitingListService waitingListService;
+    @Autowired
+    private UserService userService;
 
     public void joinRequest(Long groupId, Long userId) {
         Group group = groupService.findById(groupId);
@@ -63,4 +67,18 @@ public class GroupJoinManager {
     }
 
 
+    public void manageJoinProcess(JoinManageRequest request, Long groupId, Long createUserId) {
+        Group group = groupService.findById(groupId);
+        if(group.getUserId().equals(createUserId)) throw new CustomException(GroupException.USER_FORBIDDEN_ACCESS);
+
+        if(request.getStatus().equals("approve")){
+            if(group.getCurrentParticipants() >= group.getMaxParticipants())  throw new CustomException(GroupException.GROUP_CAPACITY_EXCEEDED);
+            else{
+                participantService.addUserToGroup(group, request.getUserId());
+            }
+        }else if(request.getStatus().equals("deny")){
+            WaitingList waitingList = waitingListService.findByGroupAndUserId(group, request.getUserId());
+            waitingListService.deleteWaitingList(waitingList);
+        }
+    }
 }
