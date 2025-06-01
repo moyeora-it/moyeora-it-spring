@@ -1,5 +1,6 @@
 package com.moyeorait.moyeoraitspring.domain.bookmark.contoller;
 
+import com.moyeorait.moyeoraitspring.commons.annotation.Login;
 import com.moyeorait.moyeoraitspring.commons.response.ApiResponse;
 import com.moyeorait.moyeoraitspring.domain.bookmark.BookmarkService;
 import com.moyeorait.moyeoraitspring.domain.bookmark.contoller.request.BookmarkRequest;
@@ -15,8 +16,7 @@ public class BookmarkController {
     BookmarkService bookmarkService;
 
     @PatchMapping
-    public ApiResponse<Void> patchBookmark(@RequestBody BookmarkRequest request) {
-        Long userId = 1L;
+    public ApiResponse<Void> patchBookmark(@Login Long userId, @RequestBody BookmarkRequest request) {
 
         bookmarkService.updateBookmark(request, userId);
 

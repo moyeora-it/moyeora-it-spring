@@ -11,7 +11,7 @@ import lombok.ToString;
 @AllArgsConstructor
 public class GroupInfoResponse {
 
-    GroupInfo gorup;
+    GroupInfo group;
     UserInfo host;
 
     public static GroupInfoResponse of(GroupInfo group, UserInfo user) {

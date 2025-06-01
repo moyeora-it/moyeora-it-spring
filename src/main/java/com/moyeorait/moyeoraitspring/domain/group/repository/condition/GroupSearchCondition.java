@@ -13,8 +13,8 @@ import java.util.List;
 @AllArgsConstructor
 public class GroupSearchCondition {
 
-    private String search; // 검색어
-    private List<String> type; // study, project, all
+    private String keyword; // 검색어
+    private String type; // study, project, all
     private List<String> skill;
     private List<String> position;
     private String sort;  // start_date, end_date, deadline

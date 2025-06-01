@@ -19,11 +19,11 @@ import java.util.List;
 public class GroupQueryRepositoryImpl implements GroupQueryRepository{
 
     private final JPAQueryFactory queryFactory;
+    QGroup group = QGroup.group;
+    QSkill skill = QSkill.skill;
+    QPosition position = QPosition.position;
 
     public List<Group> searchGroup(GroupSearchCondition condition){
-        QGroup group = QGroup.group;
-        QSkill skill = QSkill.skill;
-        QPosition position = QPosition.position;
 
         return queryFactory
                 .select(group)
@@ -31,8 +31,8 @@ public class GroupQueryRepositoryImpl implements GroupQueryRepository{
                 .leftJoin(skill).on(skill.group.eq(group))
                 .leftJoin(position).on(position.group.eq(group))
                 .where(
-                        titleContains(condition.getSearch()),
-                        typeIn(condition.getType()),
+                        titleContains(condition.getKeyword()),
+                        typeEq(condition.getType()),
                         skillIn(condition.getSkill()),
                         positionIn(condition.getPosition())
                 )
@@ -46,8 +46,8 @@ public class GroupQueryRepositoryImpl implements GroupQueryRepository{
         return StringUtils.hasText(search) ? QGroup.group.title.containsIgnoreCase(search) : null;
     }
 
-    private BooleanExpression typeIn(List<String> types) {
-        return types != null && !types.isEmpty() ? QGroup.group.type.in(types) : null;
+    private BooleanExpression typeEq(String type) {
+        return StringUtils.hasText(type) ? group.type.eq(type) : null;
     }
 
     private BooleanExpression skillIn(List<String> skills) {

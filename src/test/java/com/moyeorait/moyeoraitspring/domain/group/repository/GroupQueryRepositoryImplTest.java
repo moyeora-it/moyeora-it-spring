@@ -28,10 +28,10 @@ class GroupQueryRepositoryImplTest {
     @DisplayName("조회 조건에 따라 Group엔티티를 반환한다.")
     void groupSearchSuccess(){
         Group group1 = createGroupInstance("test1", "testcon1", 1L, "testType");
-        Group group2 = createGroupInstance("testTitle2", "testContent2", 1L, "ALL");
-        Group group3 = createGroupInstance("testTitle3", "testContent3", 1L, "ALL");
-        Group group4 = createGroupInstance("testTitle4", "testContent4", 1L, "ALL");
-        Group group5 = createGroupInstance("testTitle5", "testContent5", 1L, "ALL");
+        Group group2 = createGroupInstance("testTitle2", "testContent2", 1L, "STUDY");
+        Group group3 = createGroupInstance("testTitle3", "testContent3", 1L, "STUDY");
+        Group group4 = createGroupInstance("testTitle4", "testContent4", 1L, "STUDY");
+        Group group5 = createGroupInstance("testTitle5", "testContent5", 1L, "STUDY");
 
         groupRepository.save(group1);
         groupRepository.save(group2);
@@ -40,8 +40,8 @@ class GroupQueryRepositoryImplTest {
         groupRepository.save(group5);
 
         GroupSearchCondition condition = GroupSearchCondition.builder()
-                .search("Title")
-                .type(List.of("ALL")).build();
+                .keyword("Title")
+                .type("STUDY").build();
 
         List<Group> result = groupQueryRepository.searchGroup(condition);
         Assertions.assertThat(result.size()).isEqualTo(4);

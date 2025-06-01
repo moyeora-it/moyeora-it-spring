@@ -16,7 +16,7 @@ import java.util.List;
 public class GroupInfo {
     Long groupId;
     String title;
-    String content;
+    String description;
     Long userId;
     boolean autoAllow;
     Integer currentParticipants;
@@ -34,7 +34,7 @@ public class GroupInfo {
         return GroupInfo.builder()
                 .groupId(group.getGroupId())
                 .title(group.getTitle())
-                .content(group.getContent())
+                .description(group.getContent())
                 .userId(group.getUserId())
                 .autoAllow(group.getAutoAllow())
                 .currentParticipants(group.getCurrentParticipants())

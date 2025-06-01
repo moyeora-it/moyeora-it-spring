@@ -1,5 +1,6 @@
 package com.moyeorait.moyeoraitspring.domain.user;
 
+import com.moyeorait.moyeoraitspring.commons.external.dto.NodeUserInfoResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,13 +16,13 @@ public class UserInfo {
     String profileImage;
     String email;
 
-    public static UserInfo from(UserNodeResponse response) {
+    public static UserInfo of(NodeUserInfoResponse response, Long userId) {
 
         return UserInfo.builder()
-                .userId(response.getUserId())
-                .nickname(response.getNickname())
-                .profileImage(response.getProfileImage())
-                .email(response.getEmail())
+                .userId(userId)
+                .nickname(response.getItems().getItems().getNickname())
+                .profileImage(response.getItems().getItems().getProfile_image())
+                .email(response.getItems().getItems().getEmail())
                 .build();
     }
 }
