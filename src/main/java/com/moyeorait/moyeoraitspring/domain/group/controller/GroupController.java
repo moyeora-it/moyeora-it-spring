@@ -6,6 +6,7 @@ import com.moyeorait.moyeoraitspring.domain.group.GroupJoinManager;
 import com.moyeorait.moyeoraitspring.domain.group.controller.request.CreateGroupRequest;
 import com.moyeorait.moyeoraitspring.domain.group.controller.request.JoinManageRequest;
 import com.moyeorait.moyeoraitspring.domain.group.controller.response.GroupInfoResponse;
+import com.moyeorait.moyeoraitspring.domain.group.repository.Group;
 import com.moyeorait.moyeoraitspring.domain.group.repository.condition.GroupSearchCondition;
 import com.moyeorait.moyeoraitspring.domain.group.service.GroupService;
 import com.moyeorait.moyeoraitspring.domain.reply.controller.request.Content;
@@ -39,14 +40,14 @@ public class GroupController {
 
     @Operation(summary = "그룹 생성", description = "로그인 필요, 요청 정보를 기반으로 그룹을 생성합니다.")
     @PostMapping
-    public ApiResponse<Void> requestCreateGroup(@Login Long userId, @Valid @RequestBody CreateGroupRequest request){
+    public ApiResponse<Long> requestCreateGroup(@Login Long userId, @Valid @RequestBody CreateGroupRequest request){
 
-        groupService.createGroup(request, userId);
+        Group group = groupService.createGroup(request, userId);
 
         System.out.println("test");
         log.debug("request : {}", request);
 
-        return ApiResponse.success();
+        return ApiResponse.success(group.getGroupId());
     }
 
     @Operation(summary = "그룹 정보 조회", description = "그룹의 상세 정보를 조회합니다.")
