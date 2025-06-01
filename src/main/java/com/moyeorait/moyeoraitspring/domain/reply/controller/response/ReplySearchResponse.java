@@ -16,5 +16,5 @@ public class ReplySearchResponse {
 
     List<ReplyInfo> items;
     boolean hasNext;
-    long cursor;
+    Long cursor;
 }

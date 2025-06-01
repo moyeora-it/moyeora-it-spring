@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -21,7 +22,7 @@ import java.util.Map;
 @Slf4j
 public class JwtAuthFilter extends OncePerRequestFilter {
     private static final String JWT_AUTH_URL = "http://34.47.97.152/api/v1/user/info";
-
+    private static final AntPathMatcher pathMatcher = new AntPathMatcher();
     private final RedisTemplate<String, String> redisTemplate;
     private final RestTemplate restTemplate;
 
@@ -60,7 +61,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     }
 
     private String extractToken(HttpServletRequest request){
+        log.debug("extractToken");
+
         String header = request.getHeader("Authorization");
+        log.debug("header : {}", header);
         if(header != null || header.startsWith("Bearer ")){
             return header.substring(7);
         }
@@ -116,6 +120,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String uri = request.getRequestURI();
 
         return FILTERED_TARGETS.stream()
-                .noneMatch(target -> target.getMethod().equals(method) && target.getPath().equals(uri)); // equals -> startWith 변경 시 접두사 기준 필터링
+                .noneMatch(target ->
+                        target.getMethod().equalsIgnoreCase(method)
+                                && pathMatcher.match(target.getPath(), uri)
+                );
     }
 }

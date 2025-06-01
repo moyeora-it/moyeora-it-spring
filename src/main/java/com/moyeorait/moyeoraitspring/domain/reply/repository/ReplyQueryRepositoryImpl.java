@@ -20,12 +20,13 @@ public class ReplyQueryRepositoryImpl implements ReplyQueryRepository{
 
         return queryFactory
                 .select(reply)
+                .from(reply)
                 .where(
                         reply.group.eq(condition.getGroup()), // 그룹 게시글 중
                         reply.parent.isNull(), // 대댓글빼고, 댓글만
-                        cursorLt(condition.getCursor()) // 이전 댓글만
+                        cursorGt(condition.getCursor()) // 이전 댓글만
                 )
-                .orderBy(reply.replyId.desc())
+                .orderBy(reply.replyId.asc())
                 .limit(pageSize)
                 .fetch();
     }
@@ -36,11 +37,12 @@ public class ReplyQueryRepositoryImpl implements ReplyQueryRepository{
 
         return queryFactory
                 .select(reply)
+                .from(reply)
                 .where(
-                        reply.parent.eq(reply),
-                        cursorLt(condition.getCursor())
+                        reply.parent.eq(condition.getReply()),
+                        cursorGt(condition.getCursor())
                 )
-                .orderBy(reply.replyId.desc())
+                .orderBy(reply.replyId.asc())
                 .limit(pageSize)
                 .fetch();
     }
@@ -49,4 +51,9 @@ public class ReplyQueryRepositoryImpl implements ReplyQueryRepository{
         if (cursor == null) return null;
         return QReply.reply.replyId.lt(cursor);
     }
+    private Predicate cursorGt(Long cursor) {
+        if (cursor == null) return null;
+        return QReply.reply.replyId.gt(cursor);
+    }
+
 }

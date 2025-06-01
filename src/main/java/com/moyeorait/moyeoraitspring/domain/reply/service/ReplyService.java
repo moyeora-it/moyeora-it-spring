@@ -13,6 +13,7 @@ import com.moyeorait.moyeoraitspring.domain.reply.repository.ReplyRepository;
 import com.moyeorait.moyeoraitspring.domain.reply.repository.condition.ReplySearchCondition;
 import com.moyeorait.moyeoraitspring.domain.user.UserInfo;
 import com.moyeorait.moyeoraitspring.domain.user.UserManager;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +22,7 @@ import java.util.List;
 
 @Service
 @Transactional
+@Slf4j
 public class ReplyService {
     @Autowired
     ReplyRepository replyRepository;
@@ -53,7 +55,7 @@ public class ReplyService {
 
         int pageSize = request.getSize();
         List<Reply> replies =  replyQueryRepository.searchByCondition(condition, pageSize + 1);
-
+        log.debug("replies size : {}", replies.size());
         boolean hasNext = replies.size() > pageSize;
         if(hasNext) replies = replies.subList(0, pageSize);
 
@@ -78,6 +80,7 @@ public class ReplyService {
         ReReplySearchCondition condition = ReReplySearchCondition.of(request, reply);
         int pageSize = request.getSize();
         List<Reply> replies = replyQueryRepository.searchReReplyByCondition(condition, pageSize + 1);
+        log.debug("replies size : {}", replies.size());
 
         boolean hasNext = replies.size() > pageSize;
         if(hasNext) replies = replies.subList(0, pageSize);
