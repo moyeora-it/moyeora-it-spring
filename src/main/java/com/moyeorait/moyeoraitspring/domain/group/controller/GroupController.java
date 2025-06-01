@@ -14,6 +14,7 @@ import com.moyeorait.moyeoraitspring.domain.reply.controller.request.ReplySearch
 import com.moyeorait.moyeoraitspring.domain.reply.controller.response.ReplySearchResponse;
 import com.moyeorait.moyeoraitspring.domain.reply.service.ReplyService;
 import com.moyeorait.moyeoraitspring.domain.user.UserInfo;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,7 @@ public class GroupController {
     ReplyService replyService;
 
 
+    @Operation(summary = "그룹 생성", description = "로그인 필요, 요청 정보를 기반으로 그룹을 생성합니다.")
     @PostMapping
     public ApiResponse<Void> requestCreateGroup(@Login Long userId, @Valid @RequestBody CreateGroupRequest request){
 
@@ -47,6 +49,7 @@ public class GroupController {
         return ApiResponse.success();
     }
 
+    @Operation(summary = "그룹 정보 조회", description = "그룹의 상세 정보를 조회합니다.")
     @GetMapping("/{groupId}")
     public ApiResponse<GroupInfoResponse> findGroup(@PathVariable Long groupId){
         log.debug("findGroupId : {}", groupId);
@@ -55,6 +58,7 @@ public class GroupController {
         return ApiResponse.success(result);
     }
 
+    @Operation(summary = "그룹 조건 조회", description = "조건을 기반으로 그룹을 조회합니다.")
     @GetMapping
     public ApiResponse<List<GroupInfoResponse>> findGroups(
             @RequestParam(required = false) String sort,
@@ -76,6 +80,8 @@ public class GroupController {
         return ApiResponse.success(result);
     }
 
+
+    @Operation(summary = "그룹 참여 요청", description = "로그인 필요, 그룹참여를 요청합니다.")
     @PostMapping("/{groupId}/applications")
     public ApiResponse<Void> joinRequestGroup(@Login Long userId, @PathVariable Long groupId){
 
@@ -84,6 +90,7 @@ public class GroupController {
         return ApiResponse.success();
     }
 
+    @Operation(summary = "그룹 참여 취소", description = "로그인 필요, 그룹 참여를 취소합니다.")
     @DeleteMapping("/{groupId}/applications")
     public ApiResponse<Void> leaveRequestGroup(@Login Long userId, @PathVariable Long groupId){
         groupJoinManager.cancelRequest(groupId, userId);
@@ -91,6 +98,8 @@ public class GroupController {
         return ApiResponse.success();
     }
 
+
+    @Operation(summary = "그룹 참여 관리", description = "로그인 필요, 대기 상태인 그룹참여를 수락하거나, 거절합니다.")
     @PostMapping("/{groupId}/join")
     public ApiResponse<Void> manageJoinRequest(@Login Long userId, @PathVariable Long groupId, @RequestBody JoinManageRequest request){
 
@@ -99,6 +108,9 @@ public class GroupController {
         return ApiResponse.success();
     }
 
+
+
+    @Operation(summary = "댓글 조회", description = "그룹의 댓글을 조회합니다.")
     @GetMapping("/{groupId}/replies")
     public ApiResponse<ReplySearchResponse> searchReplyRequest(@RequestBody ReplySearchRequest request, @PathVariable Long groupId){
         ReplySearchResponse result = replyService.searchReply(request, groupId);
@@ -106,6 +118,7 @@ public class GroupController {
     }
 
 
+    @Operation(summary = "댓글 생성", description = "로그인 필요, 그룹에 댓글을 입력합니다.")
     @PostMapping("/{groupId}/replies")
     public ApiResponse<Void> createReplyRequest(@Login Long userId,@RequestBody Content content, @PathVariable Long groupId){
 
@@ -115,12 +128,14 @@ public class GroupController {
         return ApiResponse.success();
     }
 
+    @Operation(summary = "대댓글 조회", description = "댓글 Id를 기준으로 대댓글을 조회합니다.")
     @GetMapping("/{groupId}/replies/{replyId}")
     public ApiResponse<ReplySearchResponse> searchReReplyReauest(@RequestBody ReplySearchRequest request, @PathVariable Long replyId){
         ReplySearchResponse result = replyService.searchReReply(request, replyId);
         return ApiResponse.success(result);
     }
 
+    @Operation(summary = "대댓글 생성", description = "로그인 필요, 대댓글을 생성합니다.")
     @PostMapping("/{groupId}/replies/{replyId}")
     public ApiResponse<Void> createChildReplyRequest(@Login Long userId,@PathVariable Long groupId, @PathVariable Long replyId, @RequestBody Content content){
         ReplySaveRequest request = new ReplySaveRequest(groupId, userId, replyId, content.getContent());
@@ -128,6 +143,8 @@ public class GroupController {
         return ApiResponse.success();
     }
 
+
+    @Operation(summary = "댓글,대댓글 삭제", description = "replyId를 기반으로 댓글 또는, 대댓글을 삭제합니다.")
     @DeleteMapping("/{groupId}/replies/{replyId}")
     public ApiResponse<Void> deleteReplyRequest(@Login Long userId, @PathVariable Long groupId, @PathVariable Long replyId){
 
@@ -137,6 +154,7 @@ public class GroupController {
     }
 
 
+    @Operation(summary = "그룹 참여자 조회", description = "그룹 참여자를 조회합니다.")
     @GetMapping("/{groupId}/participants")
     public ApiResponse<List<UserInfo>> findUserInfoOfGroup(@PathVariable Long groupId){
         List<UserInfo> result = groupService.findUserInfoOfGroup(groupId);
