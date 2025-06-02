@@ -4,6 +4,8 @@ import com.moyeorait.moyeoraitspring.domain.group.repository.Group;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface WaitingListRepository extends JpaRepository<WaitingList, Long> {
 
@@ -12,5 +14,7 @@ public interface WaitingListRepository extends JpaRepository<WaitingList, Long> 
     WaitingList findByGroupAndUserId(Group group, Long userId);
 
     void deleteByGroup(Group group);
+
+    List<WaitingList> findByGroup(Group group);
 }
 

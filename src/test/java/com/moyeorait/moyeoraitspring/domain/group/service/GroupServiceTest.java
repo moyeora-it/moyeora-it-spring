@@ -20,6 +20,7 @@ import jakarta.persistence.PersistenceContext;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.mockito.BDDMockito;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -141,11 +142,12 @@ class GroupServiceTest {
 
         Long userId = 1L;
         groupService.createGroup(request, userId);
-        groupService.createGroup(request, userId);
-        groupService.createGroup(request, userId);
+        groupService.createGroup(request1, userId);
+        groupService.createGroup(request2, userId);
 
         GroupSearchCondition condition = GroupSearchCondition.builder()
                 .skill(Arrays.asList("Java", "Spring"))
+                .keyword("1")
                 .build();
         MyGroupSearchCondition myCondition = MyGroupSearchCondition.builder()
                 .condition(condition)
@@ -154,7 +156,7 @@ class GroupServiceTest {
                 .userId(userId)
                 .build();
         MyGroupSearchResponse result = groupService.searchMyGroups(myCondition);
-        Assertions.assertThat(result.getItems().size()).isEqualTo(3);
+        Assertions.assertThat(result.getItems().size()).isEqualTo(1);
     }
 
     @Test

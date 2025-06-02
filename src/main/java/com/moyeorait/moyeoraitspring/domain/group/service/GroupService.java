@@ -1,9 +1,11 @@
 package com.moyeorait.moyeoraitspring.domain.group.service;
 
+import com.moyeorait.moyeoraitspring.commons.exception.CustomException;
 import com.moyeorait.moyeoraitspring.domain.group.controller.request.CreateGroupRequest;
 import com.moyeorait.moyeoraitspring.domain.group.controller.response.GroupInfoJoinResponse;
 import com.moyeorait.moyeoraitspring.domain.group.controller.response.GroupInfoResponse;
 import com.moyeorait.moyeoraitspring.domain.group.controller.response.MyGroupSearchResponse;
+import com.moyeorait.moyeoraitspring.domain.group.exception.GroupException;
 import com.moyeorait.moyeoraitspring.domain.group.repository.Group;
 import com.moyeorait.moyeoraitspring.domain.group.repository.GroupQueryRepository;
 import com.moyeorait.moyeoraitspring.domain.group.repository.GroupRepository;
@@ -20,6 +22,7 @@ import com.moyeorait.moyeoraitspring.domain.skill.repository.SkillRepository;
 import com.moyeorait.moyeoraitspring.domain.user.UserInfo;
 import com.moyeorait.moyeoraitspring.domain.user.UserManager;
 import com.moyeorait.moyeoraitspring.domain.user.UserService;
+import com.moyeorait.moyeoraitspring.domain.waitinglist.repository.WaitingList;
 import com.moyeorait.moyeoraitspring.domain.waitinglist.repository.WaitingListRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -180,6 +183,21 @@ public class GroupService {
                 .toList();
     }
 
+    public List<UserInfo> findWaitingListOfGroup(Long groupId) {
+        Group group = groupRepository.findById(groupId).orElseThrow(() -> new CustomException(
+                GroupException.GROUP_NOT_FOUND));
+
+        List<WaitingList> users = waitingListRepository.findByGroup(group);
+
+        return users.stream()
+                .map(user -> {
+                    long userId = user.getUserId();
+                    UserInfo response = userManager.findNodeUser(userId);
+                    return response;
+                })
+                .toList();
+    }
+
     public void deleteGroupByGroupId(Long groupId) {
         Group group = groupRepository.findById(groupId).get();
 
@@ -193,5 +211,6 @@ public class GroupService {
         log.debug("그룹 삭제가 완료되었습니다.");
 
     }
+
 
 }

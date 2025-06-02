@@ -219,4 +219,11 @@ public class GroupController {
         List<UserInfo> result = groupService.findUserInfoOfGroup(groupId);
         return ApiResponse.success(result);
     }
+
+    @Operation(summary = "그룹 대기요청 조회", description = "그룹 참여 요청 후 대기자 명단을 조회합니다.")
+    @GetMapping("/{groupId}/waitinglist")
+    public ApiResponse<List<UserInfo>> findWaitingList(@PathVariable Long groupId) {
+        List<UserInfo> result = groupService.findWaitingListOfGroup(groupId);
+        return ApiResponse.success(result);
+    }
 }
