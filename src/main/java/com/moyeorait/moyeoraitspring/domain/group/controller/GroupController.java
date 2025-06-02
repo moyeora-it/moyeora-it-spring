@@ -5,6 +5,7 @@ import com.moyeorait.moyeoraitspring.commons.response.ApiResponse;
 import com.moyeorait.moyeoraitspring.domain.group.GroupJoinManager;
 import com.moyeorait.moyeoraitspring.domain.group.controller.request.CreateGroupRequest;
 import com.moyeorait.moyeoraitspring.domain.group.controller.request.JoinManageRequest;
+import com.moyeorait.moyeoraitspring.domain.group.controller.response.GroupInfoJoinResponse;
 import com.moyeorait.moyeoraitspring.domain.group.controller.response.GroupInfoResponse;
 import com.moyeorait.moyeoraitspring.domain.group.repository.Group;
 import com.moyeorait.moyeoraitspring.domain.group.repository.condition.GroupSearchCondition;
@@ -41,7 +42,7 @@ public class GroupController {
     @Operation(summary = "그룹 생성", description = "로그인 필요, 요청 정보를 기반으로 그룹을 생성합니다.")
     @PostMapping
     public ApiResponse<Long> requestCreateGroup(@Login Long userId, @Valid @RequestBody CreateGroupRequest request){
-
+        log.debug("createGroup userId : ", userId);
         Group group = groupService.createGroup(request, userId);
 
         System.out.println("test");
@@ -52,11 +53,22 @@ public class GroupController {
 
     @Operation(summary = "그룹 정보 조회", description = "그룹의 상세 정보를 조회합니다.")
     @GetMapping("/{groupId}")
-    public ApiResponse<GroupInfoResponse> findGroup(@PathVariable Long groupId){
+    public ApiResponse<GroupInfoJoinResponse> findGroup(@PathVariable Long groupId, @Login Long userId){
         log.debug("findGroupId : {}", groupId);
-        GroupInfoResponse result = groupService.findGroupByGroupId(groupId);
+        log.debug("userId: {}", userId);
+        GroupInfoJoinResponse result = groupService.findGroupByGroupId(groupId, userId);
 
         return ApiResponse.success(result);
+    }
+
+    @Operation(summary = "그룹 모임 취소", description = "주최자가 모임을 취소합니다.")
+    @DeleteMapping("/{groupId}")
+    public ApiResponse<Long> deleteGroup(@PathVariable Long groupId, @Login Long userId){
+        log.debug("deleteGroup : {}", groupId);
+
+        groupService.deleteGroupByGroupId(groupId);
+
+        return ApiResponse.success();
     }
 
     @Operation(summary = "그룹 조건 조회", description = "조건을 기반으로 그룹을 조회합니다.")
@@ -78,6 +90,17 @@ public class GroupController {
                 .type(type)
                 .keyword(keyword).build();
         List<GroupInfoResponse> result = groupService.searchGroups(condition);
+        return ApiResponse.success(result);
+    }
+
+    @Operation(summary = "추천 그룹 조회", description = "유저 정보를 기반으로 추천된 그룹 리스트를 반환합니다.")
+    @GetMapping("/recommend")
+    public ApiResponse<List<GroupInfoResponse>> recommendGroups(@Login Long userId){
+        log.debug("userId : {}", userId);
+        List<GroupInfoResponse> result = null;
+        if(userId == null) result = groupService.searchGroups(GroupSearchCondition.builder().build());
+        else result = groupService.searchGroups(GroupSearchCondition.builder().build());
+
         return ApiResponse.success(result);
     }
 

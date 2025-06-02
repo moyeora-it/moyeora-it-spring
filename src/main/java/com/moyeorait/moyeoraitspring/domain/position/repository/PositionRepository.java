@@ -10,4 +10,6 @@ import java.util.List;
 public interface PositionRepository extends JpaRepository<Position, Long> {
 
     List<Position> findByGroup(Group group);
+
+    void deleteByGroup(Group group);
 }

@@ -33,12 +33,11 @@ public class Reply extends BaseTimeEntity {
     private boolean isDeleted;
 
 
-
-    public static Reply of(ReplySaveRequest request, Group group, Reply reply) {
+    public static Reply of(ReplySaveRequest request, Group group, Reply parentReply) {
         return Reply.builder()
                 .group(group)
                 .userId(request.getUserId())
-                .parent(reply)
+                .parent(parentReply)
                 .content(request.getContent())
                 .isDeleted(false)
                 .build();

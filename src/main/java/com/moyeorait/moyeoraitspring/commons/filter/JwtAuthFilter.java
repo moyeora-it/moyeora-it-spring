@@ -1,11 +1,14 @@
 package com.moyeorait.moyeoraitspring.commons.filter;
 
+import com.moyeorait.moyeoraitspring.commons.exception.CustomException;
 import com.moyeorait.moyeoraitspring.commons.external.dto.NodeUserInfo;
 import com.moyeorait.moyeoraitspring.commons.external.dto.NodeUserInfoResponse;
+import com.moyeorait.moyeoraitspring.domain.user.UserException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jdk.jshell.spi.ExecutionControl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.*;
@@ -64,14 +67,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         log.debug("extractToken");
 
         String header = request.getHeader("Authorization");
-        log.debug("header : {}", header);
-        if(header != null || header.startsWith("Bearer ")){
+        if(header != null && header.startsWith("Bearer ")){
+            log.debug("header : {}", header);
             return header.substring(7);
         }
         return null;
     }
 
     private String findUserInfoByTokenAndNode(String token) {
+        log.debug("findUserOfNodeServer token:" , token);
         try{
             HttpHeaders headers = new HttpHeaders();
             headers.add("Cookie", "accessToken=" + token);
@@ -93,7 +97,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             }
 
         } catch (Exception e){
-            return null;
+
+            log.error(e.getMessage());
+            throw new CustomException(UserException.USER_AUTHORIZE_EXCEPTION);
         }
         return null;
     }

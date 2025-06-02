@@ -15,4 +15,6 @@ public interface ParticipantRepository extends JpaRepository<Participant, Long> 
     int deleteByGroupAndUserId(Group saveGroup, Long userId);
 
     List<Participant> findByGroup(Group group);
+
+    void deleteByGroup(Group group);
 }

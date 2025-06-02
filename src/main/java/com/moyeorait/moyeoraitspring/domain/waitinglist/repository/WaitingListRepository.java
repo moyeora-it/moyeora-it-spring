@@ -10,5 +10,7 @@ public interface WaitingListRepository extends JpaRepository<WaitingList, Long> 
     int deleteByGroupAndUserId(Group group, Long currentUserId);
 
     WaitingList findByGroupAndUserId(Group group, Long userId);
+
+    void deleteByGroup(Group group);
 }
 

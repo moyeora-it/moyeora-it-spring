@@ -1,6 +1,7 @@
 package com.moyeorait.moyeoraitspring.domain.group.service;
 
 import com.moyeorait.moyeoraitspring.domain.group.controller.request.CreateGroupRequest;
+import com.moyeorait.moyeoraitspring.domain.group.controller.response.GroupInfoJoinResponse;
 import com.moyeorait.moyeoraitspring.domain.group.controller.response.GroupInfoResponse;
 import com.moyeorait.moyeoraitspring.domain.group.repository.Group;
 import com.moyeorait.moyeoraitspring.domain.group.repository.GroupQueryRepository;
@@ -11,13 +12,17 @@ import com.moyeorait.moyeoraitspring.domain.participant.ParticipantRepository;
 import com.moyeorait.moyeoraitspring.domain.participant.repository.Participant;
 import com.moyeorait.moyeoraitspring.domain.position.repository.Position;
 import com.moyeorait.moyeoraitspring.domain.position.repository.PositionRepository;
+import com.moyeorait.moyeoraitspring.domain.reply.repository.ReplyRepository;
 import com.moyeorait.moyeoraitspring.domain.skill.repository.Skill;
 import com.moyeorait.moyeoraitspring.domain.skill.repository.SkillRepository;
 import com.moyeorait.moyeoraitspring.domain.user.UserInfo;
 import com.moyeorait.moyeoraitspring.domain.user.UserManager;
 import com.moyeorait.moyeoraitspring.domain.user.UserNodeResponse;
 import com.moyeorait.moyeoraitspring.domain.user.UserService;
+import com.moyeorait.moyeoraitspring.domain.waitinglist.repository.WaitingList;
+import com.moyeorait.moyeoraitspring.domain.waitinglist.repository.WaitingListRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +33,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class GroupService {
 
     private final GroupRepository groupRepository;
@@ -37,6 +43,10 @@ public class GroupService {
     private final PositionRepository positionRepository;
     private final UserManager userManager;
     private final ParticipantRepository participantRepository;
+    private final WaitingListRepository waitingListRepository;
+    private final ReplyRepository replyRepository;
+
+
     public Group createGroup(CreateGroupRequest request, Long userId) {
         Group group = new Group(request, userId);
         Group result = groupRepository.save(group);
@@ -59,7 +69,7 @@ public class GroupService {
         return result;
     }
 
-    public GroupInfoResponse findGroupByGroupId(Long groupId) {
+    public GroupInfoJoinResponse findGroupByGroupId(Long groupId, Long loginUserId) {
 
         Group group = groupRepository.findById(groupId).get();
 
@@ -73,10 +83,17 @@ public class GroupService {
 
         GroupInfo groupInfo = GroupInfo.of(group, skills, positions);
 
-        Long userId = group.getUserId();
-        UserInfo userInfo = userManager.findNodeUser(userId);
+        Long createdUserId = group.getUserId();
+        log.debug("createUserId : {}", createdUserId);
+        UserInfo userInfo = userManager.findNodeUser(createdUserId);
 
-        GroupInfoResponse result = GroupInfoResponse.of(groupInfo, userInfo);
+        boolean isApplicant = false;
+        if(loginUserId != null){
+            if(waitingListRepository.findByGroupAndUserId(group, loginUserId) != null) isApplicant = true;
+            if(participantRepository.findByGroupAndUserId(group, loginUserId) != null) isApplicant = true;
+        }
+
+        GroupInfoJoinResponse result = GroupInfoJoinResponse.of(groupInfo, userInfo, isApplicant);
 
         return result;
     }
@@ -124,5 +141,19 @@ public class GroupService {
                     return response;
                 })
                 .toList();
+    }
+
+    public void deleteGroupByGroupId(Long groupId) {
+        Group group = groupRepository.findById(groupId).get();
+
+        waitingListRepository.deleteByGroup(group);
+        participantRepository.deleteByGroup(group);
+        replyRepository.deleteByGroup(group);
+        skillRepository.deleteByGroup(group);
+        positionRepository.deleteByGroup(group);
+        groupRepository.delete(group);
+
+        log.debug("그룹 삭제가 완료되었습니다.");
+
     }
 }
