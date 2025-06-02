@@ -1,6 +1,7 @@
 package com.moyeorait.moyeoraitspring.domain.group.controller;
 
 import com.moyeorait.moyeoraitspring.commons.annotation.Login;
+import com.moyeorait.moyeoraitspring.commons.response.ApiPageResponse;
 import com.moyeorait.moyeoraitspring.commons.response.ApiResponse;
 import com.moyeorait.moyeoraitspring.domain.group.GroupJoinManager;
 import com.moyeorait.moyeoraitspring.domain.group.controller.request.CreateGroupRequest;
@@ -136,9 +137,10 @@ public class GroupController {
 
     @Operation(summary = "댓글 조회", description = "그룹의 댓글을 조회합니다.")
     @GetMapping("/{groupId}/replies")
-    public ApiResponse<ReplySearchResponse> searchReplyRequest(@RequestBody ReplySearchRequest request, @PathVariable Long groupId){
+    public ApiPageResponse searchReplyRequest(@RequestBody ReplySearchRequest request, @PathVariable Long groupId){
         ReplySearchResponse result = replyService.searchReply(request, groupId);
-        return ApiResponse.success(result);
+        return ApiPageResponse.success(result.getItems(), result.isHasNext(), result.getCursor());
+        //        return ApiResponse.success(result);
     }
 
 
@@ -154,9 +156,9 @@ public class GroupController {
 
     @Operation(summary = "대댓글 조회", description = "댓글 Id를 기준으로 대댓글을 조회합니다.")
     @GetMapping("/{groupId}/replies/{replyId}")
-    public ApiResponse<ReplySearchResponse> searchReReplyReauest(@RequestBody ReplySearchRequest request, @PathVariable Long replyId){
+    public ApiPageResponse searchReReplyReauest(@RequestBody ReplySearchRequest request, @PathVariable Long replyId){
         ReplySearchResponse result = replyService.searchReReply(request, replyId);
-        return ApiResponse.success(result);
+        return ApiPageResponse.success(result.getItems(), result.isHasNext(), result.getCursor());
     }
 
     @Operation(summary = "대댓글 생성", description = "로그인 필요, 대댓글을 생성합니다.")
