@@ -40,7 +40,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String token = extractToken(request);
 
         if(token == null) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            request.setAttribute("userId", null);
+            filterChain.doFilter(request, response);
             return;
         }
 
@@ -122,13 +124,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        String method = request.getMethod();
-        String uri = request.getRequestURI();
-
-        return FILTERED_TARGETS.stream()
-                .noneMatch(target ->
-                        target.getMethod().equalsIgnoreCase(method)
-                                && pathMatcher.match(target.getPath(), uri)
-                );
+        return false;
+//        String method = request.getMethod();
+//        String uri = request.getRequestURI();
+//
+//        return FILTERED_TARGETS.stream()
+//                .noneMatch(target ->
+//                        target.getMethod().equalsIgnoreCase(method)
+//                                && pathMatcher.match(target.getPath(), uri)
+//                );
     }
 }

@@ -53,7 +53,7 @@ public class GroupController {
 
     @Operation(summary = "그룹 정보 조회", description = "그룹의 상세 정보를 조회합니다.")
     @GetMapping("/{groupId}")
-    public ApiResponse<GroupInfoJoinResponse> findGroup(@PathVariable Long groupId, @Login Long userId){
+    public ApiResponse<GroupInfoJoinResponse> findGroup(@PathVariable Long groupId, @Login(required = false) Long userId){
         log.debug("findGroupId : {}", groupId);
         log.debug("userId: {}", userId);
         GroupInfoJoinResponse result = groupService.findGroupByGroupId(groupId, userId);

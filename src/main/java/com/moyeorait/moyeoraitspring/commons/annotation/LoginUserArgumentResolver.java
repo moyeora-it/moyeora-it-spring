@@ -2,6 +2,7 @@ package com.moyeorait.moyeoraitspring.commons.annotation;
 
 import com.moyeorait.moyeoraitspring.commons.exception.CustomException;
 import com.moyeorait.moyeoraitspring.commons.test.TestException;
+import com.moyeorait.moyeoraitspring.domain.user.UserException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
@@ -26,6 +27,16 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
         String userIdStr = (String) request.getAttribute("userId");
         log.debug("userId : {}", userIdStr);
+
+        Login loginAnnotation = parameter.getParameterAnnotation(Login.class);
+
+        if (userIdStr == null) {
+            if (loginAnnotation != null && loginAnnotation.required()) {
+                throw new CustomException(UserException.USER_AUTHORIZE_EXCEPTION);
+            } else {
+                return null;
+            }
+        }
 //        if(userIdStr == null) throw new CustomException(TestException.UNAUTHORIZE);
         if(userIdStr == null) return null;
         return Long.parseLong(userIdStr);
