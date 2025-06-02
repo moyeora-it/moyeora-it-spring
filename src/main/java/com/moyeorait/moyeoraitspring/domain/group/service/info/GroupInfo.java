@@ -1,6 +1,7 @@
 package com.moyeorait.moyeoraitspring.domain.group.service.info;
 
 import com.moyeorait.moyeoraitspring.domain.group.repository.Group;
+import com.moyeorait.moyeoraitspring.domain.user.UserInfo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,6 +30,7 @@ public class GroupInfo {
     LocalDateTime deadline;
     LocalDateTime startDate;
     LocalDateTime endDate;
+    List<UserInfo> userInfos;
 
     public static GroupInfo of(Group group, List<String> skills, List<String> positions) {
         return GroupInfo.builder()
@@ -45,6 +47,24 @@ public class GroupInfo {
                 .deadline(group.getDeadline())
                 .startDate(group.getStartDate())
                 .endDate(group.getEndDate())
+                .build();
+    }
+    public static GroupInfo of(Group group, List<String> skills, List<String> positions, List<UserInfo> users) {
+        return GroupInfo.builder()
+                .groupId(group.getGroupId())
+                .title(group.getTitle())
+                .description(group.getContent())
+                .userId(group.getUserId())
+                .autoAllow(group.getAutoAllow())
+                .currentParticipants(group.getCurrentParticipants())
+                .maxParticipants(group.getMaxParticipants())
+                .status(group.getStatus())
+                .type(group.getType())
+                .views(group.getViews())
+                .deadline(group.getDeadline())
+                .startDate(group.getStartDate())
+                .endDate(group.getEndDate())
+                .userInfos(users)
                 .build();
     }
 }

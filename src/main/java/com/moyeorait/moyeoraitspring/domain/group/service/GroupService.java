@@ -1,6 +1,7 @@
 package com.moyeorait.moyeoraitspring.domain.group.service;
 
 import com.moyeorait.moyeoraitspring.commons.exception.CustomException;
+import com.moyeorait.moyeoraitspring.domain.bookmark.repository.BookmarkRepository;
 import com.moyeorait.moyeoraitspring.domain.group.controller.request.CreateGroupRequest;
 import com.moyeorait.moyeoraitspring.domain.group.controller.response.GroupInfoJoinResponse;
 import com.moyeorait.moyeoraitspring.domain.group.controller.response.GroupInfoResponse;
@@ -46,6 +47,7 @@ public class GroupService {
     private final ParticipantRepository participantRepository;
     private final WaitingListRepository waitingListRepository;
     private final ReplyRepository replyRepository;
+    private final BookmarkRepository bookmarkRepository;
 
 
     public Group createGroup(CreateGroupRequest request, Long userId) {
@@ -72,7 +74,8 @@ public class GroupService {
 
     public GroupInfoJoinResponse findGroupByGroupId(Long groupId, Long loginUserId) {
 
-        Group group = groupRepository.findById(groupId).get();
+        Group group = groupRepository.findById(groupId).orElseThrow(() -> new CustomException(
+                GroupException.GROUP_NOT_FOUND));
 
         List<String> skills = skillRepository.findByGroup(group).stream()
                 .map(Skill::getSkillInfo)
@@ -82,19 +85,36 @@ public class GroupService {
                 .map(Position::getPositionInfo)
                 .toList();
 
-        GroupInfo groupInfo = GroupInfo.of(group, skills, positions);
+        List<Participant> users = participantRepository.findByGroup(group);
+        List<UserInfo> userList = users.stream()
+                .map(user -> {
+                    long userId = user.getUserId();
+                    UserInfo response = userManager.findNodeUser(userId);
+                    return response;
+                })
+                .toList();
+
+        GroupInfo groupInfo = GroupInfo.of(group, skills, positions, userList);
 
         Long createdUserId = group.getUserId();
         log.debug("createUserId : {}", createdUserId);
         UserInfo userInfo = userManager.findNodeUser(createdUserId);
 
         boolean isApplicant = false;
+        boolean isJoined = false;
+        boolean isBookmark = false;
         if(loginUserId != null){
             if(waitingListRepository.findByGroupAndUserId(group, loginUserId) != null) isApplicant = true;
-            if(participantRepository.findByGroupAndUserId(group, loginUserId) != null) isApplicant = true;
+            if(participantRepository.findByGroupAndUserId(group, loginUserId) != null) {
+                isApplicant = true;
+                isJoined = true;
+            }
+            if(bookmarkRepository.findByGroupAndUserId(group, loginUserId) != null) isBookmark = true;
         }
 
-        GroupInfoJoinResponse result = GroupInfoJoinResponse.of(groupInfo, userInfo, isApplicant);
+
+
+        GroupInfoJoinResponse result = GroupInfoJoinResponse.of(groupInfo, userInfo, isApplicant, isJoined, isBookmark);
 
         return result;
     }
@@ -170,7 +190,8 @@ public class GroupService {
     }
 
     public List<UserInfo> findUserInfoOfGroup(Long groupId) {
-        Group group = groupRepository.findById(groupId).get();
+        Group group = groupRepository.findById(groupId).orElseThrow(() -> new CustomException(
+                GroupException.GROUP_NOT_FOUND));
 
         List<Participant> users = participantRepository.findByGroup(group);
 

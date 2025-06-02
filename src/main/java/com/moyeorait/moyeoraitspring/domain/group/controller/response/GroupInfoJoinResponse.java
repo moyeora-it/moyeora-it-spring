@@ -11,11 +11,14 @@ import lombok.ToString;
 @AllArgsConstructor
 public class GroupInfoJoinResponse {
 
+
     GroupInfo groupInfo;
     UserInfo userInfo;
     boolean isApplicant;
+    boolean isJoined;
+    boolean isBookmark;
 
-    public static GroupInfoJoinResponse of(GroupInfo group, UserInfo user, boolean isApplicant) {
-        return new GroupInfoJoinResponse(group, user, isApplicant);
+    public static GroupInfoJoinResponse of(GroupInfo group, UserInfo user, boolean isApplicant, boolean isJoined, boolean isBookmark) {
+        return new GroupInfoJoinResponse(group, user, isApplicant, isJoined, isBookmark);
     }
 }

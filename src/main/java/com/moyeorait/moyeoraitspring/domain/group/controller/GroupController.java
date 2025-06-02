@@ -54,7 +54,7 @@ public class GroupController {
         return ApiResponse.success(group.getGroupId());
     }
 
-    @Operation(summary = "그룹 정보 조회", description = "그룹의 상세 정보를 조회합니다.")
+    @Operation(summary = "그룹 상세 정보 조회", description = "그룹의 상세 정보를 조회합니다.")
     @GetMapping("/{groupId}")
     public ApiResponse<GroupInfoJoinResponse> findGroup(@PathVariable Long groupId, @Login(required = false) Long userId){
         log.debug("findGroupId : {}", groupId);
