@@ -8,8 +8,10 @@ import com.moyeorait.moyeoraitspring.domain.group.controller.request.CreateGroup
 import com.moyeorait.moyeoraitspring.domain.group.controller.request.JoinManageRequest;
 import com.moyeorait.moyeoraitspring.domain.group.controller.response.GroupInfoJoinResponse;
 import com.moyeorait.moyeoraitspring.domain.group.controller.response.GroupInfoResponse;
+import com.moyeorait.moyeoraitspring.domain.group.controller.response.MyGroupSearchResponse;
 import com.moyeorait.moyeoraitspring.domain.group.repository.Group;
 import com.moyeorait.moyeoraitspring.domain.group.repository.condition.GroupSearchCondition;
+import com.moyeorait.moyeoraitspring.domain.group.repository.condition.MyGroupSearchCondition;
 import com.moyeorait.moyeoraitspring.domain.group.service.GroupService;
 import com.moyeorait.moyeoraitspring.domain.reply.controller.request.Content;
 import com.moyeorait.moyeoraitspring.domain.reply.controller.request.ReplySaveRequest;
@@ -92,6 +94,37 @@ public class GroupController {
                 .keyword(keyword).build();
         List<GroupInfoResponse> result = groupService.searchGroups(condition);
         return ApiResponse.success(result);
+    }
+
+    @Operation(summary = "마이페이지 그룹조회", description = "자신이 참여하고 있는 그룹에 대해 조건을 기반으로 조회합니다.")
+    @GetMapping("/mygroup")
+    public ApiPageResponse findMyGroups(
+            @RequestParam(required = false) String sort,
+            @RequestParam(required = false) String order,
+            @RequestParam(required = false) List<String> skill,
+            @RequestParam(required = false) List<String> position,
+            @RequestParam(required = false) String type,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) Integer size,
+            @RequestParam(required = false) Long cursor,
+            @RequestParam(required = false) String search,
+            @Login Long userId
+    ){
+        GroupSearchCondition condition = GroupSearchCondition.builder()
+                .sort(sort)
+                .order(order)
+                .skill(skill)
+                .position(position)
+                .type(type)
+                .keyword(search).build();
+        MyGroupSearchCondition myCondition = MyGroupSearchCondition.builder()
+                .condition(condition)
+                .status(status)
+                .size(size+1) // hasNext판별을 위해 미리 +1
+                .userId(userId)
+                .cursor(cursor).build();
+        MyGroupSearchResponse result = groupService.searchMyGroups(myCondition);
+        return ApiPageResponse.success(result.getItems(), result.isHasNext(), result.getCursor());
     }
 
     @Operation(summary = "추천 그룹 조회", description = "유저 정보를 기반으로 추천된 그룹 리스트를 반환합니다.")

@@ -2,11 +2,17 @@ package com.moyeorait.moyeoraitspring.domain.group.repository;
 
 import com.moyeorait.moyeoraitspring.domain.bookmark.repository.QBookmark;
 import com.moyeorait.moyeoraitspring.domain.group.repository.condition.GroupSearchCondition;
+import com.moyeorait.moyeoraitspring.domain.group.repository.condition.MyGroupSearchCondition;
+import com.moyeorait.moyeoraitspring.domain.participant.repository.QParticipant;
 import com.moyeorait.moyeoraitspring.domain.position.repository.QPosition;
 import com.moyeorait.moyeoraitspring.domain.skill.repository.QSkill;
+import com.moyeorait.moyeoraitspring.domain.waitinglist.repository.QWaitingList;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryFactory;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.PathBuilder;
+import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -22,6 +28,9 @@ public class GroupQueryRepositoryImpl implements GroupQueryRepository{
     QGroup group = QGroup.group;
     QSkill skill = QSkill.skill;
     QPosition position = QPosition.position;
+    QWaitingList waitingList = QWaitingList.waitingList;
+    QParticipant participant = QParticipant.participant;
+
 
     public List<Group> searchGroup(GroupSearchCondition condition){
 
@@ -41,6 +50,51 @@ public class GroupQueryRepositoryImpl implements GroupQueryRepository{
                 .fetch();
     }
 
+    @Override
+    public List<Group> searchMyGroup(MyGroupSearchCondition condition) {
+        GroupSearchCondition base = condition.getCondition();
+        Long userId = condition.getUserId();
+
+        BooleanBuilder whereBuilder = new BooleanBuilder()
+                .and(titleContains(base.getKeyword()))
+                .and(typeEq(base.getType()))
+                .and(skillIn(base.getSkill()))
+                .and(positionIn(base.getPosition()))
+                .and(cursorCondition(condition.getCursor(), base.getOrder()));
+
+        BooleanExpression joinFilter = null;
+
+        if ("RECRUITING".equalsIgnoreCase(condition.getStatus())) {
+            joinFilter = waitingList.userId.eq(userId);
+        } else if ("PARTICIPANT".equalsIgnoreCase(condition.getStatus())) {
+            joinFilter = participant.userId.eq(userId);
+        } else {
+            // 둘 다 포함
+            joinFilter = waitingList.userId.eq(userId)
+                    .or(participant.userId.eq(userId));
+        }
+
+        JPQLQuery<Group> query = queryFactory
+                .select(group).distinct()
+                .from(group)
+                .leftJoin(skill).on(skill.group.eq(group))
+                .leftJoin(position).on(position.group.eq(group))
+                .leftJoin(waitingList).on(waitingList.group.eq(group))
+                .leftJoin(participant).on(participant.group.eq(group))
+                .where(whereBuilder.and(joinFilter))
+                .orderBy(orderBy(base.getSort(), base.getOrder(), group))
+                .limit(condition.getSize() + 1);
+
+        return query.fetch();
+    }
+    private BooleanExpression cursorCondition(Long cursor, String order) {
+        if (cursor == null) return null;
+        if ("desc".equalsIgnoreCase(order)) {
+            return group.groupId.lt(cursor);
+        }
+        // 기본은 DESC로 간주
+        return group.groupId.gt(cursor);
+    }
 
     private BooleanExpression titleContains(String search) {
         return StringUtils.hasText(search) ? QGroup.group.title.containsIgnoreCase(search) : null;
@@ -57,7 +111,10 @@ public class GroupQueryRepositoryImpl implements GroupQueryRepository{
     private BooleanExpression positionIn(List<String> positions) {
         return positions != null && !positions.isEmpty() ? QPosition.position.positionInfo.in(positions) : null;
     }
-
+    private BooleanExpression cursorLt(Long cursor) {
+        if (cursor == null) return null;
+        return QGroup.group.groupId.lt(cursor);
+    }
     private OrderSpecifier<?> orderBy(String sort, String order) {
         boolean asc = "asc".equalsIgnoreCase(order);
         if ("deadline".equalsIgnoreCase(sort)) {
@@ -65,5 +122,15 @@ public class GroupQueryRepositoryImpl implements GroupQueryRepository{
         } else {
             return asc ? QGroup.group.createdAt.asc() : QGroup.group.createdAt.desc();
         }
+    }
+
+    private OrderSpecifier<?> orderBy(String sort, String order, QGroup group) {
+        PathBuilder<Group> path = new PathBuilder<>(Group.class, "group");
+
+        if ("createdAt".equalsIgnoreCase(sort)) {
+            return "desc".equalsIgnoreCase(order) ? group.createdAt.desc() : group.createdAt.asc();
+        }
+        // 기본은 groupId
+        return "desc".equalsIgnoreCase(order) ? group.groupId.desc() : group.groupId.asc();
     }
 }

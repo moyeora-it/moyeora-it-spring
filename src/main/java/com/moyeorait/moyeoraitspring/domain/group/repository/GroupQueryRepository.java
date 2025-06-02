@@ -1,9 +1,12 @@
 package com.moyeorait.moyeoraitspring.domain.group.repository;
 
 import com.moyeorait.moyeoraitspring.domain.group.repository.condition.GroupSearchCondition;
+import com.moyeorait.moyeoraitspring.domain.group.repository.condition.MyGroupSearchCondition;
 
 import java.util.List;
 
 public interface GroupQueryRepository {
     List<Group> searchGroup(GroupSearchCondition condition);
+
+    List<Group> searchMyGroup(MyGroupSearchCondition myCondition);
 }

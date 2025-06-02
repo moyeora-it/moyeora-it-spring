@@ -2,22 +2,34 @@ package com.moyeorait.moyeoraitspring.domain.group.service;
 
 import com.moyeorait.moyeoraitspring.domain.group.controller.request.CreateGroupRequest;
 import com.moyeorait.moyeoraitspring.domain.group.controller.response.GroupInfoResponse;
+import com.moyeorait.moyeoraitspring.domain.group.controller.response.MyGroupSearchResponse;
 import com.moyeorait.moyeoraitspring.domain.group.repository.Group;
 import com.moyeorait.moyeoraitspring.domain.group.repository.GroupQueryRepository;
 import com.moyeorait.moyeoraitspring.domain.group.repository.GroupRepository;
 import com.moyeorait.moyeoraitspring.domain.group.repository.condition.GroupSearchCondition;
+import com.moyeorait.moyeoraitspring.domain.group.repository.condition.MyGroupSearchCondition;
 import com.moyeorait.moyeoraitspring.domain.participant.ParticipantRepository;
 import com.moyeorait.moyeoraitspring.domain.reply.controller.request.ReplySaveRequest;
 import com.moyeorait.moyeoraitspring.domain.reply.repository.Reply;
 import com.moyeorait.moyeoraitspring.domain.reply.repository.ReplyRepository;
+import com.moyeorait.moyeoraitspring.domain.user.UserInfo;
+import com.moyeorait.moyeoraitspring.domain.user.UserManager;
 import com.moyeorait.moyeoraitspring.domain.waitinglist.repository.WaitingListRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.BDDMockito;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -41,6 +53,17 @@ class GroupServiceTest {
     GroupRepository groupRepository;
     @Autowired
     GroupQueryRepository groupQueryRepository;
+    @Autowired
+    UserManager userManager;
+    @TestConfiguration
+    static class TestConfig {
+        @Bean
+        @Primary
+        public UserManager userManager() {
+            return Mockito.mock(UserManager.class);
+        }
+    }
+
     @PersistenceContext
     EntityManager entityManager;
 
@@ -65,6 +88,73 @@ class GroupServiceTest {
         Group result = groupService.createGroup(request, userId);
 
         Assertions.assertThat(result.getTitle()).isEqualTo(request.getTitle());
+    }
+
+    @Test
+    @DisplayName("마이페이지 그룹 검색 조회")
+    void searchMyGroupSuccess(){
+        CreateGroupRequest request = new CreateGroupRequest(
+                "스터디 모집합니다1",
+                LocalDateTime.of(2025, 6, 10, 23, 59),
+                LocalDateTime.of(2025, 6, 15, 0, 0),
+                LocalDateTime.of(2025, 8, 15, 0, 0),
+                5,
+                "백엔드 중심의 스터디입니다.",
+                Arrays.asList("백엔드", "프론트엔드"),
+                Arrays.asList("Java", "Spring", "React"),
+                "스터디",
+                true
+        );
+
+        CreateGroupRequest request1 = new CreateGroupRequest(
+                "스터디 모집합니다2",
+                LocalDateTime.of(2025, 6, 10, 23, 59),
+                LocalDateTime.of(2025, 6, 15, 0, 0),
+                LocalDateTime.of(2025, 8, 15, 0, 0),
+                5,
+                "백엔드 중심의 스터디입니다.",
+                Arrays.asList("백엔드", "프론트엔드"),
+                Arrays.asList("Java", "Spring", "React"),
+                "스터디",
+                true
+        );
+
+        CreateGroupRequest request2 = new CreateGroupRequest(
+                "스터디 모집합니다3",
+                LocalDateTime.of(2025, 6, 10, 23, 59),
+                LocalDateTime.of(2025, 6, 15, 0, 0),
+                LocalDateTime.of(2025, 8, 15, 0, 0),
+                5,
+                "백엔드 중심의 스터디입니다.",
+                Arrays.asList("백엔드", "프론트엔드"),
+                Arrays.asList("Java", "Spring", "React"),
+                "스터디",
+                true
+        );
+
+        UserInfo userInfo = UserInfo.builder()
+                .userId(1L)
+                .email("test")
+                .profileImage("test")
+                .nickname("test").build();
+        BDDMockito.given(userManager.findNodeUser(1L)).willReturn(userInfo);
+
+        Long userId = 1L;
+        groupService.createGroup(request, userId);
+        groupService.createGroup(request, userId);
+        groupService.createGroup(request, userId);
+
+        GroupSearchCondition condition = GroupSearchCondition.builder()
+                .skill(Arrays.asList("Java", "Spring"))
+                .build();
+        MyGroupSearchCondition myCondition = MyGroupSearchCondition.builder()
+                .condition(condition)
+                .cursor(0L)
+                .size(10)
+                .userId(userId)
+                .build();
+        MyGroupSearchResponse result = groupService.searchMyGroups(myCondition);
+        Assertions.assertThat(result.getItems().size()).isEqualTo(3);
     }
 
     @Test

@@ -3,10 +3,12 @@ package com.moyeorait.moyeoraitspring.domain.group.service;
 import com.moyeorait.moyeoraitspring.domain.group.controller.request.CreateGroupRequest;
 import com.moyeorait.moyeoraitspring.domain.group.controller.response.GroupInfoJoinResponse;
 import com.moyeorait.moyeoraitspring.domain.group.controller.response.GroupInfoResponse;
+import com.moyeorait.moyeoraitspring.domain.group.controller.response.MyGroupSearchResponse;
 import com.moyeorait.moyeoraitspring.domain.group.repository.Group;
 import com.moyeorait.moyeoraitspring.domain.group.repository.GroupQueryRepository;
 import com.moyeorait.moyeoraitspring.domain.group.repository.GroupRepository;
 import com.moyeorait.moyeoraitspring.domain.group.repository.condition.GroupSearchCondition;
+import com.moyeorait.moyeoraitspring.domain.group.repository.condition.MyGroupSearchCondition;
 import com.moyeorait.moyeoraitspring.domain.group.service.info.GroupInfo;
 import com.moyeorait.moyeoraitspring.domain.participant.ParticipantRepository;
 import com.moyeorait.moyeoraitspring.domain.participant.repository.Participant;
@@ -17,18 +19,14 @@ import com.moyeorait.moyeoraitspring.domain.skill.repository.Skill;
 import com.moyeorait.moyeoraitspring.domain.skill.repository.SkillRepository;
 import com.moyeorait.moyeoraitspring.domain.user.UserInfo;
 import com.moyeorait.moyeoraitspring.domain.user.UserManager;
-import com.moyeorait.moyeoraitspring.domain.user.UserNodeResponse;
 import com.moyeorait.moyeoraitspring.domain.user.UserService;
-import com.moyeorait.moyeoraitspring.domain.waitinglist.repository.WaitingList;
 import com.moyeorait.moyeoraitspring.domain.waitinglist.repository.WaitingListRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -129,6 +127,45 @@ public class GroupService {
                 .toList();
     }
 
+
+    public MyGroupSearchResponse searchMyGroups(MyGroupSearchCondition myCondition) {
+        int baseSize = myCondition.getSize();
+        List<Group> groups = groupQueryRepository.searchMyGroup(myCondition);
+        log.debug("groups size : {}", groups.size());
+        boolean hasNext = groups.size() > myCondition.getSize();
+
+        if(hasNext){
+            groups = groups.subList(0, baseSize);
+        }
+        List<GroupInfoResponse> result = groups.stream().map(group -> {
+            // 기술 스택 조회
+            List<String> skills = skillRepository.findByGroup(group).stream()
+                    .map(Skill::getSkillInfo)
+                    .toList();
+
+            // 포지션 조회
+            List<String> positions = positionRepository.findByGroup(group).stream()
+                    .map(Position::getPositionInfo)
+                    .toList();
+
+            // GroupInfo 생성
+            GroupInfo groupInfo = GroupInfo.of(group, skills, positions);
+
+            // 작성자 정보 조회
+            UserInfo userInfo = userManager.findNodeUser(group.getUserId());
+
+            // 응답 객체 생성
+            return GroupInfoResponse.of(groupInfo, userInfo);
+        }).toList();
+
+        Long nextCursor = result.isEmpty() ? null : groups.get(groups.size() - 1).getGroupId();
+        return MyGroupSearchResponse.builder()
+                .items(result)
+                .hasNext(hasNext)
+                .cursor(nextCursor)
+                .build();
+    }
+
     public List<UserInfo> findUserInfoOfGroup(Long groupId) {
         Group group = groupRepository.findById(groupId).get();
 
@@ -156,4 +193,5 @@ public class GroupService {
         log.debug("그룹 삭제가 완료되었습니다.");
 
     }
+
 }
