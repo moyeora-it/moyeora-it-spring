@@ -45,25 +45,13 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("*"));
-        config.setAllowedHeaders(List.of("*"));
-        config.setAllowedMethods(List.of("*"));
-        config.setAllowCredentials(false);
+        config.setAllowedOrigins(List.of("http://localhost:3000")); // 실제 클라이언트 도메인 지정
+        config.setAllowedHeaders(List.of("*")); // Authorization 포함
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowCredentials(true); // Authorization 헤더 사용 시 true
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;
     }
-//    @Bean
-//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//        http
-//                .csrf(csrf -> csrf.disable()) // REST API가 동작(csrf제거)
-//                .formLogin(form -> form.disable()) // 기본 로그인폼 제거
-//                .httpBasic(httpBasic -> httpBasic.disable()) // Basic Auth 제거
-//                .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers("/**").permitAll() // 로그인 없이 접근 허용
-//                        .anyRequest().authenticated() // 나머지는 인증
-//                );
-//        return http.build();
-//    }
 }
