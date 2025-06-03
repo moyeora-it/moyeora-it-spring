@@ -1,5 +1,7 @@
 package com.moyeorait.moyeoraitspring.domain.group.service;
 
+import com.moyeorait.moyeoraitspring.commons.enumdata.PositionEnum;
+import com.moyeorait.moyeoraitspring.commons.enumdata.SkillEnum;
 import com.moyeorait.moyeoraitspring.commons.exception.CustomException;
 import com.moyeorait.moyeoraitspring.domain.bookmark.repository.BookmarkRepository;
 import com.moyeorait.moyeoraitspring.domain.group.controller.request.CreateGroupRequest;
@@ -50,26 +52,31 @@ public class GroupService {
     private final BookmarkRepository bookmarkRepository;
 
 
-    public Group createGroup(CreateGroupRequest request, Long userId) {
+    public Long createGroup(CreateGroupRequest request, Long userId) {
         Group group = new Group(request, userId);
         Group result = groupRepository.save(group);
 
         Participant participant = new Participant(group, userId);
         participantRepository.save(participant);
 
-        List<Skill> skillEntities = request.getSkills().stream()
+        List<String> skills = SkillEnum.createStringList(request.getSkills());
+
+        List<Skill> skillEntities = skills.stream()
                 .map(skillInfo -> new Skill(result, skillInfo))
                 .toList();
 
         skillRepository.saveAll(skillEntities);
 
-        List<Position> positionEntities =request.getPosition().stream()
+
+        List<String> positions = PositionEnum.createStringList(request.getPosition());
+
+        List<Position> positionEntities = positions.stream()
                 .map(positionInfo -> new Position(result, positionInfo))
                 .toList();
 
         positionRepository.saveAll(positionEntities);
 
-        return result;
+        return result.getGroupId();
     }
 
     public GroupInfoJoinResponse findGroupByGroupId(Long groupId, Long loginUserId) {
@@ -81,9 +88,13 @@ public class GroupService {
                 .map(Skill::getSkillInfo)
                 .toList();
 
+        List<Integer> skillIndex = SkillEnum.createIdxList(skills);
+
         List<String> positions = positionRepository.findByGroup(group).stream()
                 .map(Position::getPositionInfo)
                 .toList();
+
+        List<Integer> positinIndex1 = PositionEnum.createIdxList(positions);
 
         List<Participant> users = participantRepository.findByGroup(group);
         List<UserInfo> userList = users.stream()
@@ -94,7 +105,7 @@ public class GroupService {
                 })
                 .toList();
 
-        GroupInfo groupInfo = GroupInfo.of(group, skills, positions, userList);
+        GroupInfo groupInfo = GroupInfo.of(group, skillIndex, positinIndex1, userList);
 
         Long createdUserId = group.getUserId();
         log.debug("createUserId : {}", createdUserId);
@@ -132,14 +143,15 @@ public class GroupService {
                     List<String> skills = skillRepository.findByGroup(group).stream()
                             .map(Skill::getSkillInfo)
                             .toList();
-
+                    List<Integer> skillIdx = SkillEnum.createIdxList(skills);
                     // 포지션 조회
                     List<String> positions = positionRepository.findByGroup(group).stream()
                             .map(Position::getPositionInfo)
                             .toList();
 
+                    List<Integer> positionIdx = PositionEnum.createIdxList(positions);
                     // GroupInfo 생성
-                    GroupInfo groupInfo = GroupInfo.of(group, skills, positions);
+                    GroupInfo groupInfo = GroupInfo.of(group, skillIdx, positionIdx);
 
                     // 작성자 정보 조회
                     UserInfo userInfo = userManager.findNodeUser(group.getUserId());
@@ -165,14 +177,15 @@ public class GroupService {
             List<String> skills = skillRepository.findByGroup(group).stream()
                     .map(Skill::getSkillInfo)
                     .toList();
-
+            List<Integer> skillIdx = SkillEnum.createIdxList(skills);
             // 포지션 조회
             List<String> positions = positionRepository.findByGroup(group).stream()
                     .map(Position::getPositionInfo)
                     .toList();
 
+            List<Integer> positionIdx = PositionEnum.createIdxList(positions);
             // GroupInfo 생성
-            GroupInfo groupInfo = GroupInfo.of(group, skills, positions);
+            GroupInfo groupInfo = GroupInfo.of(group, skillIdx, positionIdx);
 
             // 작성자 정보 조회
             UserInfo userInfo = userManager.findNodeUser(group.getUserId());

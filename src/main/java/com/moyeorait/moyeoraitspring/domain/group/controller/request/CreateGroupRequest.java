@@ -17,8 +17,8 @@ public class CreateGroupRequest {
     LocalDateTime endDate;
     Integer maxParticipants;
     String description;
-    List<String> position;
-    List<String> skills;
+    List<Integer> position;
+    List<Integer> skills;
     String type;
     boolean autoAllow;
 

@@ -25,14 +25,14 @@ public class GroupInfo {
     boolean status;
     String type;
     Integer views;
-    List<String> skills;
-    List<String> positions;
+    List<Integer> skills;
+    List<Integer> positions;
     LocalDateTime deadline;
     LocalDateTime startDate;
     LocalDateTime endDate;
     List<UserInfo> userInfos;
 
-    public static GroupInfo of(Group group, List<String> skills, List<String> positions) {
+    public static GroupInfo of(Group group, List<Integer> skills, List<Integer> positions) {
         return GroupInfo.builder()
                 .groupId(group.getGroupId())
                 .title(group.getTitle())
@@ -47,9 +47,11 @@ public class GroupInfo {
                 .deadline(group.getDeadline())
                 .startDate(group.getStartDate())
                 .endDate(group.getEndDate())
+                .skills(skills)
+                .positions(positions)
                 .build();
     }
-    public static GroupInfo of(Group group, List<String> skills, List<String> positions, List<UserInfo> users) {
+    public static GroupInfo of(Group group, List<Integer> skills, List<Integer> positions, List<UserInfo> users) {
         return GroupInfo.builder()
                 .groupId(group.getGroupId())
                 .title(group.getTitle())
@@ -64,6 +66,8 @@ public class GroupInfo {
                 .deadline(group.getDeadline())
                 .startDate(group.getStartDate())
                 .endDate(group.getEndDate())
+                .skills(skills)
+                .positions(positions)
                 .userInfos(users)
                 .build();
     }

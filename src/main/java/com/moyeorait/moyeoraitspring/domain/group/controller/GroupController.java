@@ -1,6 +1,8 @@
 package com.moyeorait.moyeoraitspring.domain.group.controller;
 
 import com.moyeorait.moyeoraitspring.commons.annotation.Login;
+import com.moyeorait.moyeoraitspring.commons.enumdata.PositionEnum;
+import com.moyeorait.moyeoraitspring.commons.enumdata.SkillEnum;
 import com.moyeorait.moyeoraitspring.commons.response.ApiPageResponse;
 import com.moyeorait.moyeoraitspring.commons.response.ApiResponse;
 import com.moyeorait.moyeoraitspring.domain.group.GroupJoinManager;
@@ -46,12 +48,12 @@ public class GroupController {
     @PostMapping
     public ApiResponse<Long> requestCreateGroup(@Login Long userId, @Valid @RequestBody CreateGroupRequest request){
         log.debug("createGroup userId : ", userId);
-        Group group = groupService.createGroup(request, userId);
+        Long groupId = groupService.createGroup(request, userId);
 
         System.out.println("test");
         log.debug("request : {}", request);
 
-        return ApiResponse.success(group.getGroupId());
+        return ApiResponse.success(groupId);
     }
 
     @Operation(summary = "그룹 상세 정보 조회", description = "그룹의 상세 정보를 조회합니다.")
@@ -79,17 +81,18 @@ public class GroupController {
     public ApiResponse<List<GroupInfoResponse>> findGroups(
             @RequestParam(required = false) String sort,
             @RequestParam(required = false) String order,
-            @RequestParam(required = false) List<String> skill,
-            @RequestParam(required = false) List<String> position,
+            @RequestParam(required = false) List<Integer> skill,
+            @RequestParam(required = false) List<Integer> position,
             @RequestParam(required = false) String type,
             @RequestParam(required = false) String keyword
             ){
-
+        List<String> skillList = SkillEnum.createStringList(skill);
+        List<String> positionList = PositionEnum.createStringList(position);
         GroupSearchCondition condition = GroupSearchCondition.builder()
                 .sort(sort)
                 .order(order)
-                .skill(skill)
-                .position(position)
+                .skill(skillList)
+                .position(positionList)
                 .type(type)
                 .keyword(keyword).build();
         List<GroupInfoResponse> result = groupService.searchGroups(condition);
@@ -101,8 +104,8 @@ public class GroupController {
     public ApiPageResponse findMyGroups(
             @RequestParam(required = false) String sort,
             @RequestParam(required = false) String order,
-            @RequestParam(required = false) List<String> skill,
-            @RequestParam(required = false) List<String> position,
+            @RequestParam(required = false) List<Integer> skill,
+            @RequestParam(required = false) List<Integer> position,
             @RequestParam(required = false) String type,
             @RequestParam(required = false) String status,
             @RequestParam(required = false) Integer size,
@@ -110,11 +113,13 @@ public class GroupController {
             @RequestParam(required = false) String search,
             @Login Long userId
     ){
+        List<String> skillList = SkillEnum.createStringList(skill);
+        List<String> positionList = PositionEnum.createStringList(position);
         GroupSearchCondition condition = GroupSearchCondition.builder()
                 .sort(sort)
                 .order(order)
-                .skill(skill)
-                .position(position)
+                .skill(skillList)
+                .position(positionList)
                 .type(type)
                 .keyword(search).build();
         MyGroupSearchCondition myCondition = MyGroupSearchCondition.builder()

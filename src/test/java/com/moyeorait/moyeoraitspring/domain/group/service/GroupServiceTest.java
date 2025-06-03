@@ -78,17 +78,17 @@ class GroupServiceTest {
                 LocalDateTime.of(2025, 8, 15, 0, 0),
                 5,
                 "백엔드 중심의 스터디입니다.",
-                Arrays.asList("백엔드", "프론트엔드"),
-                Arrays.asList("Java", "Spring", "React"),
+                Arrays.asList(1, 2),
+                Arrays.asList(1, 2, 3),
                 "스터디",
                 true
         );
 
         Long userId = 1L;
 
-        Group result = groupService.createGroup(request, userId);
-
-        Assertions.assertThat(result.getTitle()).isEqualTo(request.getTitle());
+        Long result = groupService.createGroup(request, userId);
+        Group saveGroup = groupService.findById(result);
+        Assertions.assertThat(saveGroup.getTitle()).isEqualTo(request.getTitle());
     }
 
     @Test
@@ -101,8 +101,8 @@ class GroupServiceTest {
                 LocalDateTime.of(2025, 8, 15, 0, 0),
                 5,
                 "백엔드 중심의 스터디입니다.",
-                Arrays.asList("백엔드", "프론트엔드"),
-                Arrays.asList("Java", "Spring", "React"),
+                Arrays.asList(1, 2),
+                Arrays.asList(1, 2, 3),
                 "스터디",
                 true
         );
@@ -114,8 +114,8 @@ class GroupServiceTest {
                 LocalDateTime.of(2025, 8, 15, 0, 0),
                 5,
                 "백엔드 중심의 스터디입니다.",
-                Arrays.asList("백엔드", "프론트엔드"),
-                Arrays.asList("Java", "Spring", "React"),
+                Arrays.asList(1, 2),
+                Arrays.asList(1, 2, 3),
                 "스터디",
                 true
         );
@@ -127,8 +127,8 @@ class GroupServiceTest {
                 LocalDateTime.of(2025, 8, 15, 0, 0),
                 5,
                 "백엔드 중심의 스터디입니다.",
-                Arrays.asList("백엔드", "프론트엔드"),
-                Arrays.asList("Java", "Spring", "React"),
+                Arrays.asList(1, 2),
+                Arrays.asList(1, 2, 3),
                 "스터디",
                 true
         );
@@ -146,7 +146,7 @@ class GroupServiceTest {
         groupService.createGroup(request2, userId);
 
         GroupSearchCondition condition = GroupSearchCondition.builder()
-                .skill(Arrays.asList("Java", "Spring"))
+                .skill(Arrays.asList("JavaScript"))
                 .keyword("1")
                 .build();
         MyGroupSearchCondition myCondition = MyGroupSearchCondition.builder()
@@ -172,14 +172,14 @@ class GroupServiceTest {
                 LocalDateTime.of(2025, 8, 15, 0, 0),
                 5,
                 "백엔드 중심의 스터디입니다.",
-                Arrays.asList("백엔드", "프론트엔드"),
-                Arrays.asList("Java", "Spring", "React"),
+                Arrays.asList(1, 2),
+                Arrays.asList(1, 2, 3),
                 "스터디",
                 true
         );
 
-        Group saveGroup = groupService.createGroup(request, createdUserId);
-
+        Long saveGroupId = groupService.createGroup(request, createdUserId);
+        Group saveGroup = groupService.findById(saveGroupId);
         ReplySaveRequest replyRequest = new ReplySaveRequest(saveGroup.getGroupId(), joinUserId, null, "테스트 진행");
         Reply reply = Reply.of(replyRequest, saveGroup, null);
         Reply saveReply = replyRepository.save(reply);
@@ -200,6 +200,7 @@ class GroupServiceTest {
     @DisplayName("그룹 조회를 진행합니다.")
     void recommendGroupSelect(){
         GroupSearchCondition condition = GroupSearchCondition.builder()
+                .keyword("zzxxzx")
                 .build();
 
         List<GroupInfoResponse> result = groupService.searchGroups(condition);
