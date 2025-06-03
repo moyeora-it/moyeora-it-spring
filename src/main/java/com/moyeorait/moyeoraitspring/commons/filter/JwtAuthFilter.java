@@ -24,7 +24,7 @@ import java.util.Map;
 @Component
 @Slf4j
 public class JwtAuthFilter extends OncePerRequestFilter {
-    private static final String JWT_AUTH_URL = "http://34.47.97.152/api/v1/user/info";
+    private static final String JWT_AUTH_URL = "https://my-api.sjcpop.com/api/v1/user/info";
     private static final AntPathMatcher pathMatcher = new AntPathMatcher();
     private final RedisTemplate<String, String> redisTemplate;
     private final RestTemplate restTemplate;

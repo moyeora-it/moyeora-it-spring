@@ -199,14 +199,45 @@ class GroupServiceTest {
     @Test
     @DisplayName("그룹 조회를 진행합니다.")
     void recommendGroupSelect(){
+        CreateGroupRequest request = new CreateGroupRequest(
+                "스터디 모집합니다",
+                LocalDateTime.of(2025, 6, 10, 23, 59),
+                LocalDateTime.of(2025, 6, 15, 0, 0),
+                LocalDateTime.of(2025, 8, 15, 0, 0),
+                5,
+                "백엔드 중심의 스터디입니다.",
+                Arrays.asList(1, 2),
+                Arrays.asList(1, 2, 3),
+                "스터디",
+                true
+        );
+
+        CreateGroupRequest request2 = new CreateGroupRequest(
+                "스터디 모집합니다",
+                LocalDateTime.of(2025, 6, 10, 23, 59),
+                LocalDateTime.of(2025, 6, 15, 0, 0),
+                LocalDateTime.of(2025, 8, 15, 0, 0),
+                5,
+                "백엔드 중심의 스터디입니다.",
+                Arrays.asList(1, 2),
+                Arrays.asList(1, 2, 3),
+                "스터디",
+                true
+        );
+        Long userId = 1L;
+        groupService.createGroup(request, userId);
+        groupService.createGroup(request2, userId);
+
         GroupSearchCondition condition = GroupSearchCondition.builder()
-                .keyword("zzxxzx")
+                .keyword("스터디")
                 .build();
+
 
         List<GroupInfoResponse> result = groupService.searchGroups(condition);
         for(GroupInfoResponse groupInfoResponse : result){
             System.out.println("groupInfoResponse : "+ groupInfoResponse);
         }
+        System.out.println("size" + result.size());
     }
 
 }

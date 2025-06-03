@@ -154,6 +154,7 @@ public class GroupService {
                     GroupInfo groupInfo = GroupInfo.of(group, skillIdx, positionIdx);
 
                     // 작성자 정보 조회
+                    log.debug("userId : {}", group.getUserId());
                     UserInfo userInfo = userManager.findNodeUser(group.getUserId());
 
                     // 응답 객체 생성
