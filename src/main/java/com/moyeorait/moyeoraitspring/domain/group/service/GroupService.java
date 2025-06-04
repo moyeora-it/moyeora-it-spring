@@ -155,10 +155,10 @@ public class GroupService {
 
                     // 작성자 정보 조회
                     log.debug("userId : {}", group.getUserId());
-                    UserInfo userInfo = userManager.findNodeUser(group.getUserId());
+//                    UserInfo userInfo = userManager.findNodeUser(group.getUserId());
 
                     // 응답 객체 생성
-                    return GroupInfoResponse.of(groupInfo, userInfo);
+                    return GroupInfoResponse.of(groupInfo);
                 })
                 .toList();
     }
@@ -189,10 +189,10 @@ public class GroupService {
             GroupInfo groupInfo = GroupInfo.of(group, skillIdx, positionIdx);
 
             // 작성자 정보 조회
-            UserInfo userInfo = userManager.findNodeUser(group.getUserId());
+//            UserInfo userInfo = userManager.findNodeUser(group.getUserId());
 
             // 응답 객체 생성
-            return GroupInfoResponse.of(groupInfo, userInfo);
+            return GroupInfoResponse.of(groupInfo);
         }).toList();
 
         Long nextCursor = result.isEmpty() ? null : groups.get(groups.size() - 1).getGroupId();

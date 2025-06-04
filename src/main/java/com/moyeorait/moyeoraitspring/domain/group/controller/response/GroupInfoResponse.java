@@ -12,9 +12,8 @@ import lombok.ToString;
 public class GroupInfoResponse {
 
     GroupInfo group;
-    UserInfo host;
 
-    public static GroupInfoResponse of(GroupInfo group, UserInfo user) {
-        return new GroupInfoResponse(group, user);
+    public static GroupInfoResponse of(GroupInfo group) {
+        return new GroupInfoResponse(group);
     }
 }
