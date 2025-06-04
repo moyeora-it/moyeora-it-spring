@@ -9,5 +9,5 @@ import lombok.ToString;
 @ToString
 public class NodeUserInfoResponse2 {
     private boolean success;
-    private NodeItemsWrapper user;
+    private NodeUserInfo user;
 }

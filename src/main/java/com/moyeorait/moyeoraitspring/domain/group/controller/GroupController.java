@@ -85,7 +85,7 @@ public class GroupController {
             @RequestParam(required = false) List<Integer> skill,
             @RequestParam(required = false) List<Integer> position,
             @RequestParam(required = false) String type,
-            @RequestParam(required = false) String keyword
+            @RequestParam(required = false) String search
             ){
         List<String> skillList = SkillEnum.createStringList(skill);
         List<String> positionList = PositionEnum.createStringList(position);
@@ -95,7 +95,7 @@ public class GroupController {
                 .skill(skillList)
                 .position(positionList)
                 .type(type)
-                .keyword(keyword).build();
+                .keyword(search).build();
         List<GroupInfoResponse> result = groupService.searchGroups(condition);
         return ApiResponse.success(result);
     }

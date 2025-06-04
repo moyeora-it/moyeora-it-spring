@@ -14,4 +14,5 @@ public class NodeUserInfo {
     private String email;
     private String nickname;
     private String profile_image;
+    private double averageRating;
 }

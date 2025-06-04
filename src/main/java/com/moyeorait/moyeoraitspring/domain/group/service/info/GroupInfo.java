@@ -15,45 +15,49 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class GroupInfo {
-    Long groupId;
+    Long id;
     String title;
-    String description;
-    Long userId;
-    boolean autoAllow;
-    Integer currentParticipants;
-    Integer maxParticipants;
-    boolean status;
-    String type;
-    Integer views;
-    List<Integer> skills;
-    List<Integer> positions;
     LocalDateTime deadline;
     LocalDateTime startDate;
     LocalDateTime endDate;
-    List<UserInfo> userInfos;
+    Integer maxParticipants;
+    List<UserInfo> participants;
+    String description;
+    List<Integer> positions;
+    List<Integer> skills;
+    LocalDateTime createdAt;
+    boolean autoAllow;
+    String type;
+
+
+    Long userId;
+    Integer currentParticipants;
+    boolean status;
+    Integer views;
 
     public static GroupInfo of(Group group, List<Integer> skills, List<Integer> positions) {
         return GroupInfo.builder()
-                .groupId(group.getGroupId())
+                .id(group.getGroupId())
                 .title(group.getTitle())
-                .description(group.getContent())
-                .userId(group.getUserId())
-                .autoAllow(group.getAutoAllow())
-                .currentParticipants(group.getCurrentParticipants())
-                .maxParticipants(group.getMaxParticipants())
-                .status(group.getStatus())
-                .type(group.getType())
-                .views(group.getViews())
                 .deadline(group.getDeadline())
                 .startDate(group.getStartDate())
                 .endDate(group.getEndDate())
-                .skills(skills)
+                .maxParticipants(group.getMaxParticipants())
+                .description(group.getContent())
                 .positions(positions)
+                .skills(skills)
+                .createdAt(group.getCreatedAt())
+                .autoAllow(group.getAutoAllow())
+                .type(group.getType())
+                .userId(group.getUserId())
+                .currentParticipants(group.getCurrentParticipants())
+                .status(group.getStatus())
+                .views(group.getViews())
                 .build();
     }
     public static GroupInfo of(Group group, List<Integer> skills, List<Integer> positions, List<UserInfo> users) {
         return GroupInfo.builder()
-                .groupId(group.getGroupId())
+                .id(group.getGroupId())
                 .title(group.getTitle())
                 .description(group.getContent())
                 .userId(group.getUserId())
@@ -68,7 +72,8 @@ public class GroupInfo {
                 .endDate(group.getEndDate())
                 .skills(skills)
                 .positions(positions)
-                .userInfos(users)
+                .participants(users)
+                .createdAt(group.getCreatedAt())
                 .build();
     }
 }

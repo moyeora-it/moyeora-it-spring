@@ -21,9 +21,9 @@ public class UserInfo {
 
         return UserInfo.builder()
                 .userId(userId)
-                .nickname(response.getUser().getItems().getNickname())
-                .profileImage(response.getUser().getItems().getProfile_image())
-                .email(response.getUser().getItems().getEmail())
+                .nickname(response.getUser().getNickname())
+                .profileImage(response.getUser().getProfile_image())
+                .email(response.getUser().getEmail())
                 .build();
     }
 }

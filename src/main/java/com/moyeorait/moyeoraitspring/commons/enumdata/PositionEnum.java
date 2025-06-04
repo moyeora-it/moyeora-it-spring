@@ -14,13 +14,14 @@ public enum PositionEnum {
     FS;
 
     public static List<Integer> createIdxList(List<String> positions) {
+        if(positions == null || positions.isEmpty()) return null;
         return positions.stream()
                 .map(positionName -> PositionEnum.valueOf(positionName).ordinal())
                 .toList();
     }
 
     public static List<String> createStringList(List<Integer> position) {
-
+        if(position == null || position.isEmpty()) return null;
         return position.stream()
                 .map(index -> String.valueOf(PositionEnum.values()[index])).toList();
     }

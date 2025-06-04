@@ -9,5 +9,4 @@ import lombok.ToString;
 @ToString
 public class NodeItemsWrapper {
     private NodeUserInfo items;
-    private double averageRating;
 }
