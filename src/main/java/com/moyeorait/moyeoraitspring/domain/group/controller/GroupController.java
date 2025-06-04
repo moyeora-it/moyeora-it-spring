@@ -68,8 +68,8 @@ public class GroupController {
             @RequestParam(required = false) List<Integer> position,
             @RequestParam(required = false) String type,
             @RequestParam(required = false) String search,
-            @RequestParam(required = false) Integer size,
-            @RequestParam(required = false) Long cursor,
+            @RequestParam Integer size,
+            @RequestParam Long cursor,
             @Login(required = false) Long userId
     ){
         List<String> skillList = SkillEnum.createStringList(skill);
@@ -117,8 +117,8 @@ public class GroupController {
             @RequestParam(required = false) List<Integer> position,
             @RequestParam(required = false) String type,
             @RequestParam(required = false) String status,
-            @RequestParam(required = false) Integer size,
-            @RequestParam(required = false) Long cursor,
+            @RequestParam Integer size,
+            @RequestParam Long cursor,
             @RequestParam(required = false) String search,
             @Login Long userId
     ){
