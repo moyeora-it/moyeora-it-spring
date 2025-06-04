@@ -17,14 +17,14 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
 
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**") // 모든 경로에 대해
-                .allowedOrigins("*") // 모든 Origin 허용
-                .allowedMethods("*") // 모든 HTTP 메서드 허용
-                .allowedHeaders("*") // 모든 Header 허용
-                .allowCredentials(false); // 필요 시 true로 (Authorization 등)
-    }
+//    @Override
+//    public void addCorsMappings(CorsRegistry registry) {
+//        registry.addMapping("/**") // 모든 경로에 대해
+//                .allowedOrigins("*") // 모든 Origin 허용
+//                .allowedMethods("*") // 모든 HTTP 메서드 허용
+//                .allowedHeaders("*") // 모든 Header 허용
+//                .allowCredentials(false); // 필요 시 true로 (Authorization 등)
+//    }
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
