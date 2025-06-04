@@ -1,8 +1,12 @@
 package com.moyeorait.moyeoraitspring.domain.reply.service;
 
+import com.moyeorait.moyeoraitspring.commons.exception.CustomException;
+import com.moyeorait.moyeoraitspring.domain.group.exception.GroupException;
 import com.moyeorait.moyeoraitspring.domain.group.repository.Group;
 import com.moyeorait.moyeoraitspring.domain.group.repository.GroupRepository;
+import com.moyeorait.moyeoraitspring.domain.reply.controller.request.ReplyUpdateRequest;
 import com.moyeorait.moyeoraitspring.domain.reply.controller.response.ReplySearchResponse;
+import com.moyeorait.moyeoraitspring.domain.reply.exception.ReplyException;
 import com.moyeorait.moyeoraitspring.domain.reply.repository.condition.ReReplySearchCondition;
 import com.moyeorait.moyeoraitspring.domain.reply.service.dto.ReplyInfo;
 import com.moyeorait.moyeoraitspring.domain.reply.controller.request.ReplySaveRequest;
@@ -11,6 +15,7 @@ import com.moyeorait.moyeoraitspring.domain.reply.repository.Reply;
 import com.moyeorait.moyeoraitspring.domain.reply.repository.ReplyQueryRepository;
 import com.moyeorait.moyeoraitspring.domain.reply.repository.ReplyRepository;
 import com.moyeorait.moyeoraitspring.domain.reply.repository.condition.ReplySearchCondition;
+import com.moyeorait.moyeoraitspring.domain.user.UserException;
 import com.moyeorait.moyeoraitspring.domain.user.UserInfo;
 import com.moyeorait.moyeoraitspring.domain.user.UserManager;
 import lombok.extern.slf4j.Slf4j;
@@ -36,12 +41,13 @@ public class ReplyService {
     @Autowired
     UserManager userManager;
 
-    public void saveReply(ReplySaveRequest request) {
+    public Long saveReply(ReplySaveRequest request) {
         Group group = groupRepository.findById(request.getGroupId()).get();
         Reply parentReply = request.getParentId() == null? null: replyRepository.findById(request.getParentId()).get();
         Reply reply = Reply.of(request, group, parentReply);
 
         replyRepository.save(reply);
+        return reply.getReplyId();
     }
 
     public void deleteByReplyId(Long replyId) {
@@ -97,6 +103,15 @@ public class ReplyService {
         ReplySearchResponse response = new ReplySearchResponse(items, hasNext, cursor);
 
         return response;
+
+    }
+
+    public void updateReply(ReplyUpdateRequest request) {
+
+        Group group = groupRepository.findById(request.getGroupId()).orElseThrow(() -> new CustomException(GroupException.GROUP_NOT_FOUND));
+        Reply reply = replyRepository.findById(request.getReplyId()).orElseThrow(() -> new CustomException(ReplyException.REPLY_NOT_FOUND));
+        if(reply.getUserId() != request.getUserId()) throw new CustomException(GroupException.USER_FORBIDDEN_ACCESS);
+        reply.setContent(request.getContent());
 
     }
 }

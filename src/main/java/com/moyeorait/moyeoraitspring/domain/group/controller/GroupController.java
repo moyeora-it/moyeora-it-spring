@@ -18,6 +18,7 @@ import com.moyeorait.moyeoraitspring.domain.group.service.GroupService;
 import com.moyeorait.moyeoraitspring.domain.reply.controller.request.Content;
 import com.moyeorait.moyeoraitspring.domain.reply.controller.request.ReplySaveRequest;
 import com.moyeorait.moyeoraitspring.domain.reply.controller.request.ReplySearchRequest;
+import com.moyeorait.moyeoraitspring.domain.reply.controller.request.ReplyUpdateRequest;
 import com.moyeorait.moyeoraitspring.domain.reply.controller.response.ReplySearchResponse;
 import com.moyeorait.moyeoraitspring.domain.reply.service.ReplyService;
 import com.moyeorait.moyeoraitspring.domain.user.UserInfo;
@@ -184,12 +185,12 @@ public class GroupController {
 
     @Operation(summary = "댓글 생성", description = "로그인 필요, 그룹에 댓글을 입력합니다.")
     @PostMapping("/{groupId}/replies")
-    public ApiResponse<Void> createReplyRequest(@Login Long userId,@RequestBody Content content, @PathVariable Long groupId){
+    public ApiResponse<Long> createReplyRequest(@Login Long userId,@RequestBody Content content, @PathVariable Long groupId){
 
         ReplySaveRequest request = new ReplySaveRequest(groupId, userId, null, content.getContent());
-        replyService.saveReply(request);
+        Long saveReplyId = replyService.saveReply(request);
 
-        return ApiResponse.success();
+        return ApiResponse.success(saveReplyId);
     }
 
     @Operation(summary = "대댓글 조회", description = "댓글 Id를 기준으로 대댓글을 조회합니다.")
@@ -201,12 +202,21 @@ public class GroupController {
 
     @Operation(summary = "대댓글 생성", description = "로그인 필요, 대댓글을 생성합니다.")
     @PostMapping("/{groupId}/replies/{replyId}")
-    public ApiResponse<Void> createChildReplyRequest(@Login Long userId,@PathVariable Long groupId, @PathVariable Long replyId, @RequestBody Content content){
+    public ApiResponse<Long> createChildReplyRequest(@Login Long userId,@PathVariable Long groupId, @PathVariable Long replyId, @RequestBody Content content){
         ReplySaveRequest request = new ReplySaveRequest(groupId, userId, replyId, content.getContent());
-        replyService.saveReply(request);
-        return ApiResponse.success();
+        Long saveReplyId = replyService.saveReply(request);
+        return ApiResponse.success(saveReplyId);
     }
 
+
+    @Operation(summary = "댓글, 대댓글 수정", description = "댓글, 대댓글을 수정합니다.")
+    @PatchMapping("/{groupId}/replies/{replyId}")
+    public ApiResponse<Void> updateReply(@Login Long userId, @PathVariable Long groupId, @PathVariable Long replyId, @RequestBody Content content){
+
+        ReplyUpdateRequest request = new ReplyUpdateRequest(groupId, userId, replyId, content.getContent());
+        replyService.updateReply(request);
+        return ApiResponse.success();
+    }
 
     @Operation(summary = "댓글,대댓글 삭제", description = "replyId를 기반으로 댓글 또는, 대댓글을 삭제합니다.")
     @DeleteMapping("/{groupId}/replies/{replyId}")
