@@ -1,5 +1,6 @@
 package com.moyeorait.moyeoraitspring.domain.group.controller.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.moyeorait.moyeoraitspring.domain.group.service.info.GroupInfo;
 import com.moyeorait.moyeoraitspring.domain.user.UserInfo;
 import lombok.AllArgsConstructor;
@@ -14,7 +15,9 @@ public class GroupInfoJoinResponse {
 
     GroupInfo group;
     UserInfo host;
+    @JsonProperty("isApplicant")
     boolean isApplicant;
+    @JsonProperty("isJoined")
     boolean isJoined;
     public static GroupInfoJoinResponse of(GroupInfo group, UserInfo user, boolean isApplicant, boolean isJoined) {
         return new GroupInfoJoinResponse(group, user, isApplicant, isJoined);

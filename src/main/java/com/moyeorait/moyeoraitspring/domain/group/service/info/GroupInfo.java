@@ -1,5 +1,6 @@
 package com.moyeorait.moyeoraitspring.domain.group.service.info;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.moyeorait.moyeoraitspring.domain.group.repository.Group;
 import com.moyeorait.moyeoraitspring.domain.user.UserInfo;
 import lombok.AllArgsConstructor;
@@ -26,6 +27,7 @@ public class GroupInfo {
     List<Integer> positions;
     List<Integer> skills;
     LocalDateTime createdAt;
+    @JsonProperty("isBookmark")
     boolean isBookmark;
     boolean autoAllow;
     String type;
