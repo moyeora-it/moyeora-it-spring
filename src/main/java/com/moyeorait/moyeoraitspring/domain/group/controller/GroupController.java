@@ -176,7 +176,8 @@ public class GroupController {
 
     @Operation(summary = "댓글 조회", description = "그룹의 댓글을 조회합니다.")
     @GetMapping("/{groupId}/replies")
-    public ApiPageResponse searchReplyRequest(@RequestBody ReplySearchRequest request, @PathVariable Long groupId){
+    public ApiPageResponse searchReplyRequest(@RequestParam Long cursor, @RequestParam Integer size, @PathVariable Long groupId){
+        ReplySearchRequest request = new ReplySearchRequest(cursor, size);
         ReplySearchResponse result = replyService.searchReply(request, groupId);
         return ApiPageResponse.success(result.getItems(), result.isHasNext(), result.getCursor());
         //        return ApiResponse.success(result);
@@ -195,7 +196,8 @@ public class GroupController {
 
     @Operation(summary = "대댓글 조회", description = "댓글 Id를 기준으로 대댓글을 조회합니다.")
     @GetMapping("/{groupId}/replies/{replyId}")
-    public ApiPageResponse searchReReplyReauest(@RequestBody ReplySearchRequest request, @PathVariable Long replyId){
+    public ApiPageResponse searchReReplyReauest(@RequestParam Long cursor, @RequestParam Integer size, @PathVariable Long replyId){
+        ReplySearchRequest request = new ReplySearchRequest(cursor, size);
         ReplySearchResponse result = replyService.searchReReply(request, replyId);
         return ApiPageResponse.success(result.getItems(), result.isHasNext(), result.getCursor());
     }
