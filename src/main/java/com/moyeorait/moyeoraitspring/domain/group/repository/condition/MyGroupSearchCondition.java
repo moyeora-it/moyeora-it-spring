@@ -13,7 +13,5 @@ public class MyGroupSearchCondition {
 
     private GroupSearchCondition condition;
     private String status;
-    private Integer size;
-    private Long cursor;
     private Long userId;
 }

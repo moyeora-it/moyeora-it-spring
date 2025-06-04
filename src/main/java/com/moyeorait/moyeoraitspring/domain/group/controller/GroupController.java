@@ -68,6 +68,8 @@ public class GroupController {
             @RequestParam(required = false) List<Integer> position,
             @RequestParam(required = false) String type,
             @RequestParam(required = false) String search,
+            @RequestParam(required = false) Integer size,
+            @RequestParam(required = false) Long cursor,
             @Login(required = false) Long userId
     ){
         List<String> skillList = SkillEnum.createStringList(skill);
@@ -78,6 +80,8 @@ public class GroupController {
                 .skill(skillList)
                 .position(positionList)
                 .type(type)
+                .size(size+1) // hasNext판별을 위해 미리 +1
+                .cursor(cursor)
                 .keyword(search).build();
         List<GroupInfoResponse> result = groupService.searchGroups(condition, userId);
         return ApiResponse.success(result);
@@ -126,13 +130,14 @@ public class GroupController {
                 .skill(skillList)
                 .position(positionList)
                 .type(type)
+                .size(size+1) // hasNext판별을 위해 미리 +1
+                .cursor(cursor)
                 .keyword(search).build();
         MyGroupSearchCondition myCondition = MyGroupSearchCondition.builder()
                 .condition(condition)
                 .status(status)
-                .size(size+1) // hasNext판별을 위해 미리 +1
                 .userId(userId)
-                .cursor(cursor).build();
+                .build();
         MyGroupSearchResponse result = groupService.searchMyGroups(myCondition);
         return ApiPageResponse.success(result.getItems(), result.isHasNext(), result.getCursor());
     }

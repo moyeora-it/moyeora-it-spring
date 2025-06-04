@@ -19,4 +19,6 @@ public class GroupSearchCondition {
     private List<String> position;
     private String sort;  // start_date, end_date, deadline
     private String order; // asc, desc
+    private Integer size;
+    private Long cursor;
 }

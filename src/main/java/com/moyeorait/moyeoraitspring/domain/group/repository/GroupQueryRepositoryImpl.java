@@ -45,8 +45,9 @@ public class GroupQueryRepositoryImpl implements GroupQueryRepository{
                         skillIn(condition.getSkill()),
                         positionIn(condition.getPosition())
                 )
-                .distinct()
+                .orderBy(orderBy(condition.getSort(), condition.getOrder(), group))
                 .orderBy(orderBy(condition.getSort(), condition.getOrder()))
+                .limit(condition.getSize() + 1)
                 .fetch();
     }
 
@@ -60,7 +61,7 @@ public class GroupQueryRepositoryImpl implements GroupQueryRepository{
                 .and(typeEq(base.getType()))
                 .and(skillIn(base.getSkill()))
                 .and(positionIn(base.getPosition()))
-                .and(cursorCondition(condition.getCursor(), base.getOrder()));
+                .and(cursorCondition(base.getCursor(), base.getOrder()));
 
         BooleanExpression joinFilter = null;
 
@@ -83,7 +84,7 @@ public class GroupQueryRepositoryImpl implements GroupQueryRepository{
                 .leftJoin(participant).on(participant.group.eq(group))
                 .where(whereBuilder.and(joinFilter))
                 .orderBy(orderBy(base.getSort(), base.getOrder(), group))
-                .limit(condition.getSize() + 1);
+                .limit(base.getSize() + 1);
 
         return query.fetch();
     }
