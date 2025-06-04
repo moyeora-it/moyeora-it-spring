@@ -16,11 +16,10 @@ import java.time.LocalDateTime;
 public class ReplyInfo {
 
     private long replyId;
-    private UserInfo userInfo;
+    private UserInfo writer;
     private String content;
     private boolean isDeleted;
     private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 
     public static ReplyInfo from(Reply reply, UserInfo userInfo){
         return new ReplyInfo(
@@ -28,8 +27,7 @@ public class ReplyInfo {
                 userInfo,
                 reply.getContent(),
                 reply.isDeleted(),
-                reply.getCreatedAt(),
-                reply.getUpdatedAt()
+                reply.getCreatedAt()
         );
     }
 }

@@ -94,7 +94,7 @@ public class GroupService {
                 .map(Position::getPositionInfo)
                 .toList();
 
-        List<Integer> positinIndex1 = PositionEnum.createIdxList(positions);
+        List<Integer> positinIndex = PositionEnum.createIdxList(positions);
 
         List<Participant> users = participantRepository.findByGroup(group);
         List<UserInfo> userList = users.stream()
@@ -105,7 +105,6 @@ public class GroupService {
                 })
                 .toList();
 
-        GroupInfo groupInfo = GroupInfo.of(group, skillIndex, positinIndex1, userList);
 
         Long createdUserId = group.getUserId();
         log.debug("createUserId : {}", createdUserId);
@@ -123,9 +122,10 @@ public class GroupService {
             if(bookmarkRepository.findByGroupAndUserId(group, loginUserId) != null) isBookmark = true;
         }
 
+        GroupInfo groupInfo = GroupInfo.of(group, skillIndex, positinIndex, userList, isBookmark);
 
 
-        GroupInfoJoinResponse result = GroupInfoJoinResponse.of(groupInfo, userInfo, isApplicant, isJoined, isBookmark);
+        GroupInfoJoinResponse result = GroupInfoJoinResponse.of(groupInfo, userInfo, isApplicant, isJoined);
 
         return result;
     }

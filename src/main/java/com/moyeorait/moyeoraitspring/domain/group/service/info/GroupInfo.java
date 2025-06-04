@@ -26,14 +26,15 @@ public class GroupInfo {
     List<Integer> positions;
     List<Integer> skills;
     LocalDateTime createdAt;
+    boolean isBookmark;
     boolean autoAllow;
     String type;
 
 
-    Long userId;
-    Integer currentParticipants;
-    boolean status;
-    Integer views;
+//    Long userId;
+//    Integer currentParticipants;
+//    boolean status;
+//    Integer views;
 
     public static GroupInfo of(Group group, List<Integer> skills, List<Integer> positions) {
         return GroupInfo.builder()
@@ -49,24 +50,24 @@ public class GroupInfo {
                 .createdAt(group.getCreatedAt())
                 .autoAllow(group.getAutoAllow())
                 .type(group.getType())
-                .userId(group.getUserId())
-                .currentParticipants(group.getCurrentParticipants())
-                .status(group.getStatus())
-                .views(group.getViews())
+//                .userId(group.getUserId())
+//                .currentParticipants(group.getCurrentParticipants())
+//                .status(group.getStatus())
+//                .views(group.getViews())
                 .build();
     }
-    public static GroupInfo of(Group group, List<Integer> skills, List<Integer> positions, List<UserInfo> users) {
+    public static GroupInfo of(Group group, List<Integer> skills, List<Integer> positions, List<UserInfo> users, boolean isBookmark) {
         return GroupInfo.builder()
                 .id(group.getGroupId())
                 .title(group.getTitle())
                 .description(group.getContent())
-                .userId(group.getUserId())
+//                .userId(group.getUserId())
                 .autoAllow(group.getAutoAllow())
-                .currentParticipants(group.getCurrentParticipants())
+//                .currentParticipants(group.getCurrentParticipants())
                 .maxParticipants(group.getMaxParticipants())
-                .status(group.getStatus())
+//                .status(group.getStatus())
                 .type(group.getType())
-                .views(group.getViews())
+//                .views(group.getViews())
                 .deadline(group.getDeadline())
                 .startDate(group.getStartDate())
                 .endDate(group.getEndDate())
@@ -74,6 +75,7 @@ public class GroupInfo {
                 .positions(positions)
                 .participants(users)
                 .createdAt(group.getCreatedAt())
+                .isBookmark(isBookmark)
                 .build();
     }
 }

@@ -22,6 +22,7 @@ import com.moyeorait.moyeoraitspring.domain.reply.controller.request.ReplyUpdate
 import com.moyeorait.moyeoraitspring.domain.reply.controller.response.ReplySearchResponse;
 import com.moyeorait.moyeoraitspring.domain.reply.service.ReplyService;
 import com.moyeorait.moyeoraitspring.domain.user.UserInfo;
+import com.moyeorait.moyeoraitspring.domain.user.UserInfoList;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -57,6 +58,30 @@ public class GroupController {
         return ApiResponse.success(groupId);
     }
 
+
+    @Operation(summary = "그룹 조건 조회", description = "조건을 기반으로 그룹을 조회합니다.")
+    @GetMapping
+    public ApiResponse<List<GroupInfoResponse>> findGroups(
+            @RequestParam(required = false) String sort,
+            @RequestParam(required = false) String order,
+            @RequestParam(required = false) List<Integer> skill,
+            @RequestParam(required = false) List<Integer> position,
+            @RequestParam(required = false) String type,
+            @RequestParam(required = false) String search
+    ){
+        List<String> skillList = SkillEnum.createStringList(skill);
+        List<String> positionList = PositionEnum.createStringList(position);
+        GroupSearchCondition condition = GroupSearchCondition.builder()
+                .sort(sort)
+                .order(order)
+                .skill(skillList)
+                .position(positionList)
+                .type(type)
+                .keyword(search).build();
+        List<GroupInfoResponse> result = groupService.searchGroups(condition);
+        return ApiResponse.success(result);
+    }
+
     @Operation(summary = "그룹 상세 정보 조회", description = "그룹의 상세 정보를 조회합니다.")
     @GetMapping("/{groupId}")
     public ApiResponse<GroupInfoJoinResponse> findGroup(@PathVariable Long groupId, @Login(required = false) Long userId){
@@ -77,28 +102,6 @@ public class GroupController {
         return ApiResponse.success();
     }
 
-    @Operation(summary = "그룹 조건 조회", description = "조건을 기반으로 그룹을 조회합니다.")
-    @GetMapping
-    public ApiResponse<List<GroupInfoResponse>> findGroups(
-            @RequestParam(required = false) String sort,
-            @RequestParam(required = false) String order,
-            @RequestParam(required = false) List<Integer> skill,
-            @RequestParam(required = false) List<Integer> position,
-            @RequestParam(required = false) String type,
-            @RequestParam(required = false) String search
-            ){
-        List<String> skillList = SkillEnum.createStringList(skill);
-        List<String> positionList = PositionEnum.createStringList(position);
-        GroupSearchCondition condition = GroupSearchCondition.builder()
-                .sort(sort)
-                .order(order)
-                .skill(skillList)
-                .position(positionList)
-                .type(type)
-                .keyword(search).build();
-        List<GroupInfoResponse> result = groupService.searchGroups(condition);
-        return ApiResponse.success(result);
-    }
 
     @Operation(summary = "마이페이지 그룹조회", description = "자신이 참여하고 있는 그룹에 대해 조건을 기반으로 조회합니다.")
     @GetMapping("/mygroup")
@@ -232,9 +235,10 @@ public class GroupController {
 
     @Operation(summary = "그룹 참여자 조회", description = "그룹 참여자를 조회합니다.")
     @GetMapping("/{groupId}/participants")
-    public ApiResponse<List<UserInfo>> findUserInfoOfGroup(@PathVariable Long groupId){
+    public ApiResponse<UserInfoList> findUserInfoOfGroup(@PathVariable Long groupId){
         List<UserInfo> result = groupService.findUserInfoOfGroup(groupId);
-        return ApiResponse.success(result);
+        UserInfoList userList = new UserInfoList(result);
+        return ApiResponse.success(userList);
     }
 
     @Operation(summary = "그룹 대기요청 조회", description = "그룹 참여 요청 후 대기자 명단을 조회합니다.")
