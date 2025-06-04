@@ -67,7 +67,8 @@ public class GroupController {
             @RequestParam(required = false) List<Integer> skill,
             @RequestParam(required = false) List<Integer> position,
             @RequestParam(required = false) String type,
-            @RequestParam(required = false) String search
+            @RequestParam(required = false) String search,
+            @Login(required = false) Long userId
     ){
         List<String> skillList = SkillEnum.createStringList(skill);
         List<String> positionList = PositionEnum.createStringList(position);
@@ -78,7 +79,7 @@ public class GroupController {
                 .position(positionList)
                 .type(type)
                 .keyword(search).build();
-        List<GroupInfoResponse> result = groupService.searchGroups(condition);
+        List<GroupInfoResponse> result = groupService.searchGroups(condition, userId);
         return ApiResponse.success(result);
     }
 
@@ -138,11 +139,11 @@ public class GroupController {
 
     @Operation(summary = "추천 그룹 조회", description = "유저 정보를 기반으로 추천된 그룹 리스트를 반환합니다.")
     @GetMapping("/recommend")
-    public ApiResponse<List<GroupInfoResponse>> recommendGroups(@Login Long userId){
+    public ApiResponse<List<GroupInfoResponse>> recommendGroups(@Login(required = false) Long userId){
         log.debug("userId : {}", userId);
         List<GroupInfoResponse> result = null;
-        if(userId == null) result = groupService.searchGroups(GroupSearchCondition.builder().build());
-        else result = groupService.searchGroups(GroupSearchCondition.builder().build());
+        if(userId == null) result = groupService.searchGroups(GroupSearchCondition.builder().build(), userId);
+        else result = groupService.searchGroups(GroupSearchCondition.builder().build(), userId);
 
         return ApiResponse.success(result);
     }

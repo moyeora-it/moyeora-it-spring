@@ -134,7 +134,7 @@ public class GroupService {
         return groupRepository.findById(groupId).get();
     }
 
-    public List<GroupInfoResponse> searchGroups(GroupSearchCondition condition) {
+    public List<GroupInfoResponse> searchGroups(GroupSearchCondition condition, Long loginUserId) {
         List<Group> groups = groupQueryRepository.searchGroup(condition);
 
         return groups.stream()
@@ -150,8 +150,26 @@ public class GroupService {
                             .toList();
 
                     List<Integer> positionIdx = PositionEnum.createIdxList(positions);
+
+                    List<Participant> users = participantRepository.findByGroup(group);
+                    List<UserInfo> userList = users.stream()
+                            .map(user -> {
+                                long userId = user.getUserId();
+                                UserInfo response = userManager.findNodeUser(userId);
+                                return response;
+                            })
+                            .toList();
+
+
+                    boolean isBookmark = false;
+                    if(loginUserId != null){
+                        if(bookmarkRepository.findByGroupAndUserId(group, loginUserId) != null) isBookmark = true;
+                    }
+
                     // GroupInfo 생성
-                    GroupInfo groupInfo = GroupInfo.of(group, skillIdx, positionIdx);
+                    GroupInfo groupInfo = GroupInfo.of(group, skillIdx, positionIdx, userList, isBookmark);
+
+
 
                     // 작성자 정보 조회
                     log.debug("userId : {}", group.getUserId());
