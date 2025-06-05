@@ -2,12 +2,14 @@ package com.moyeorait.moyeoraitspring.domain.group.service;
 
 import com.moyeorait.moyeoraitspring.domain.group.controller.request.CreateGroupRequest;
 import com.moyeorait.moyeoraitspring.domain.group.controller.response.GroupInfoResponse;
+import com.moyeorait.moyeoraitspring.domain.group.controller.response.GroupPagingResponse;
 import com.moyeorait.moyeoraitspring.domain.group.controller.response.MyGroupSearchResponse;
 import com.moyeorait.moyeoraitspring.domain.group.repository.Group;
 import com.moyeorait.moyeoraitspring.domain.group.repository.GroupQueryRepository;
 import com.moyeorait.moyeoraitspring.domain.group.repository.GroupRepository;
 import com.moyeorait.moyeoraitspring.domain.group.repository.condition.GroupSearchCondition;
 import com.moyeorait.moyeoraitspring.domain.group.repository.condition.MyGroupSearchCondition;
+import com.moyeorait.moyeoraitspring.domain.group.service.info.GroupInfo;
 import com.moyeorait.moyeoraitspring.domain.participant.ParticipantRepository;
 import com.moyeorait.moyeoraitspring.domain.reply.controller.request.ReplySaveRequest;
 import com.moyeorait.moyeoraitspring.domain.reply.repository.Reply;
@@ -148,11 +150,11 @@ class GroupServiceTest {
         GroupSearchCondition condition = GroupSearchCondition.builder()
                 .skill(Arrays.asList("JavaScript"))
                 .keyword("1")
+                .cursor(0L)
+                .size(10)
                 .build();
         MyGroupSearchCondition myCondition = MyGroupSearchCondition.builder()
                 .condition(condition)
-                .cursor(0L)
-                .size(10)
                 .userId(userId)
                 .build();
         MyGroupSearchResponse result = groupService.searchMyGroups(myCondition);
@@ -233,11 +235,11 @@ class GroupServiceTest {
                 .build();
 
 
-        List<GroupInfoResponse> result = groupService.searchGroups(condition);
-        for(GroupInfoResponse groupInfoResponse : result){
+        GroupPagingResponse result = groupService.searchGroups(condition, null);
+        for(GroupInfo groupInfoResponse : result.getItems()){
             System.out.println("groupInfoResponse : "+ groupInfoResponse);
         }
-        System.out.println("size" + result.size());
+        System.out.println("size" + result.getItems().size());
     }
 
 }

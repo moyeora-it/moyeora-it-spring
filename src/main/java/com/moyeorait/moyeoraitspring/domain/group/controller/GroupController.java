@@ -146,11 +146,8 @@ public class GroupController {
 
     @Operation(summary = "추천 그룹 조회", description = "유저 정보를 기반으로 추천된 그룹 리스트를 반환합니다.")
     @GetMapping("/recommend")
-    public ApiResponse<List<GroupInfo>> recommendGroups(@Login(required = false) Long userId){
-        log.debug("userId : {}", userId);
-        GroupPagingResponse result = null;
-        if(userId == null) result = groupService.searchGroups(GroupSearchCondition.builder().build(), userId);
-        else result = groupService.searchGroups(GroupSearchCondition.builder().build(), userId);
+    public ApiResponse<List<GroupInfo>> recommendGroups(){
+        GroupPagingResponse result = groupService.searchGroups(GroupSearchCondition.builder().cursor(0L).size(100000).build(), null);
 
         return ApiResponse.success(result.getItems());
     }
