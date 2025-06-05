@@ -74,6 +74,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             String json = objectMapper.writeValueAsString(apiResponse);
 
             response.getWriter().write(json);
+            return;
         }
         log.debug("Attribute setting : {}", userId);
         request.setAttribute("userId", userId);
