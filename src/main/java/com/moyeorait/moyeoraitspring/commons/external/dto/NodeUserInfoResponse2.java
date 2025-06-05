@@ -8,6 +8,6 @@ import lombok.ToString;
 @Setter
 @ToString
 public class NodeUserInfoResponse2 {
-    private boolean success;
-    private NodeUserInfo user;
+    private NodeStatus status;
+    private NodeUserInfo data;
 }
