@@ -1,8 +1,10 @@
 package com.moyeorait.moyeoraitspring.commons.filter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.moyeorait.moyeoraitspring.commons.exception.CustomException;
 import com.moyeorait.moyeoraitspring.commons.external.dto.NodeUserInfo;
 import com.moyeorait.moyeoraitspring.commons.external.dto.NodeUserInfoResponse;
+import com.moyeorait.moyeoraitspring.commons.response.ApiResponse;
 import com.moyeorait.moyeoraitspring.domain.user.UserException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -28,9 +30,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private static final AntPathMatcher pathMatcher = new AntPathMatcher();
     private final RedisTemplate<String, String> redisTemplate;
     private final RestTemplate restTemplate;
-
-    public JwtAuthFilter(RedisTemplate<String, String> redisTemplate) {
+    private final ObjectMapper objectMapper
+            ;
+    public JwtAuthFilter(RedisTemplate<String, String> redisTemplate, ObjectMapper objectMapper) {
         this.redisTemplate = redisTemplate;
+        this.objectMapper = objectMapper;
         this.restTemplate = new RestTemplate();
     }
 
@@ -58,7 +62,19 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 //        request.setAttribute("userId", userId);
 //        filterChain.doFilter(request, response);
 
-        String userId = findUserInfoByTokenAndNode(token);
+        String userId = null;
+        try {
+            userId = findUserInfoByTokenAndNode(token);
+        } catch (Exception e){
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+
+            ApiResponse<Object> apiResponse = ApiResponse.fail(UserException.USER_AUTHORIZE_EXCEPTION);
+            String json = objectMapper.writeValueAsString(apiResponse);
+
+            response.getWriter().write(json);
+        }
         log.debug("Attribute setting : {}", userId);
         request.setAttribute("userId", userId);
 
