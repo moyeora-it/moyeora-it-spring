@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.util.Optional;
+
 @ToString
 @Getter
 @AllArgsConstructor
@@ -18,12 +20,11 @@ public class UserInfo {
     String email;
 
     public static UserInfo of(NodeUserInfoResponse2 response, Long userId) {
-
         return UserInfo.builder()
                 .userId(userId)
-                .nickname(response.getUser().getNickname())
-                .profileImage(response.getUser().getProfile_image())
-                .email(response.getUser().getEmail())
+                .nickname(Optional.ofNullable(response.getUser().getNickname()).orElse(""))
+                .profileImage(Optional.ofNullable(response.getUser().getProfile_image()).orElse(""))
+                .email(Optional.ofNullable(response.getUser().getEmail()).orElse(""))
                 .build();
     }
 }
