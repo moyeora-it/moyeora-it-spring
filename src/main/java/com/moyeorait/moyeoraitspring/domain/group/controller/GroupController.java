@@ -10,11 +10,13 @@ import com.moyeorait.moyeoraitspring.domain.group.controller.request.CreateGroup
 import com.moyeorait.moyeoraitspring.domain.group.controller.request.JoinManageRequest;
 import com.moyeorait.moyeoraitspring.domain.group.controller.response.GroupInfoJoinResponse;
 import com.moyeorait.moyeoraitspring.domain.group.controller.response.GroupInfoResponse;
+import com.moyeorait.moyeoraitspring.domain.group.controller.response.GroupPagingResponse;
 import com.moyeorait.moyeoraitspring.domain.group.controller.response.MyGroupSearchResponse;
 import com.moyeorait.moyeoraitspring.domain.group.repository.Group;
 import com.moyeorait.moyeoraitspring.domain.group.repository.condition.GroupSearchCondition;
 import com.moyeorait.moyeoraitspring.domain.group.repository.condition.MyGroupSearchCondition;
 import com.moyeorait.moyeoraitspring.domain.group.service.GroupService;
+import com.moyeorait.moyeoraitspring.domain.group.service.info.GroupInfo;
 import com.moyeorait.moyeoraitspring.domain.reply.controller.request.Content;
 import com.moyeorait.moyeoraitspring.domain.reply.controller.request.ReplySaveRequest;
 import com.moyeorait.moyeoraitspring.domain.reply.controller.request.ReplySearchRequest;
@@ -61,7 +63,7 @@ public class GroupController {
 
     @Operation(summary = "그룹 조건 조회", description = "조건을 기반으로 그룹을 조회합니다.")
     @GetMapping
-    public ApiResponse<List<GroupInfoResponse>> findGroups(
+    public ApiPageResponse findGroups(
             @RequestParam(required = false) String sort,
             @RequestParam(required = false) String order,
             @RequestParam(required = false) List<Integer> skill,
@@ -83,8 +85,8 @@ public class GroupController {
                 .size(size+1) // hasNext판별을 위해 미리 +1
                 .cursor(cursor)
                 .keyword(search).build();
-        List<GroupInfoResponse> result = groupService.searchGroups(condition, userId);
-        return ApiResponse.success(result);
+        GroupPagingResponse result = groupService.searchGroups(condition, userId);
+        return ApiPageResponse.success(result.getItems(), result.isHasNext(), result.getCursor());
     }
 
     @Operation(summary = "그룹 상세 정보 조회", description = "그룹의 상세 정보를 조회합니다.")
@@ -144,13 +146,13 @@ public class GroupController {
 
     @Operation(summary = "추천 그룹 조회", description = "유저 정보를 기반으로 추천된 그룹 리스트를 반환합니다.")
     @GetMapping("/recommend")
-    public ApiResponse<List<GroupInfoResponse>> recommendGroups(@Login(required = false) Long userId){
+    public ApiResponse<List<GroupInfo>> recommendGroups(@Login(required = false) Long userId){
         log.debug("userId : {}", userId);
-        List<GroupInfoResponse> result = null;
+        GroupPagingResponse result = null;
         if(userId == null) result = groupService.searchGroups(GroupSearchCondition.builder().build(), userId);
         else result = groupService.searchGroups(GroupSearchCondition.builder().build(), userId);
 
-        return ApiResponse.success(result);
+        return ApiResponse.success(result.getItems());
     }
 
 

@@ -16,9 +16,9 @@ public class GroupInfoJoinResponse {
     GroupInfo group;
     UserInfo host;
     @JsonProperty("isApplicant")
-    boolean isApplicant;
+    boolean applicant;
     @JsonProperty("isJoined")
-    boolean isJoined;
+    boolean joined;
     public static GroupInfoJoinResponse of(GroupInfo group, UserInfo user, boolean isApplicant, boolean isJoined) {
         return new GroupInfoJoinResponse(group, user, isApplicant, isJoined);
     }

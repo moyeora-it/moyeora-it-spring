@@ -24,11 +24,11 @@ public class GroupInfo {
     Integer maxParticipants;
     List<UserInfo> participants;
     String description;
-    List<Integer> positions;
+    List<Integer> position;
     List<Integer> skills;
     LocalDateTime createdAt;
     @JsonProperty("isBookmark")
-    boolean isBookmark;
+    boolean bookmark;
     boolean autoAllow;
     String type;
 
@@ -47,7 +47,7 @@ public class GroupInfo {
                 .endDate(group.getEndDate())
                 .maxParticipants(group.getMaxParticipants())
                 .description(group.getContent())
-                .positions(positions)
+                .position(positions)
                 .skills(skills)
                 .createdAt(group.getCreatedAt())
                 .autoAllow(group.getAutoAllow())
@@ -74,10 +74,10 @@ public class GroupInfo {
                 .startDate(group.getStartDate())
                 .endDate(group.getEndDate())
                 .skills(skills)
-                .positions(positions)
+                .position(positions)
                 .participants(users)
                 .createdAt(group.getCreatedAt())
-                .isBookmark(isBookmark)
+                .bookmark(isBookmark)
                 .build();
     }
 }

@@ -7,6 +7,7 @@ import com.moyeorait.moyeoraitspring.domain.bookmark.repository.BookmarkReposito
 import com.moyeorait.moyeoraitspring.domain.group.controller.request.CreateGroupRequest;
 import com.moyeorait.moyeoraitspring.domain.group.controller.response.GroupInfoJoinResponse;
 import com.moyeorait.moyeoraitspring.domain.group.controller.response.GroupInfoResponse;
+import com.moyeorait.moyeoraitspring.domain.group.controller.response.GroupPagingResponse;
 import com.moyeorait.moyeoraitspring.domain.group.controller.response.MyGroupSearchResponse;
 import com.moyeorait.moyeoraitspring.domain.group.exception.GroupException;
 import com.moyeorait.moyeoraitspring.domain.group.repository.Group;
@@ -134,10 +135,9 @@ public class GroupService {
         return groupRepository.findById(groupId).get();
     }
 
-    public List<GroupInfoResponse> searchGroups(GroupSearchCondition condition, Long loginUserId) {
+    public GroupPagingResponse searchGroups(GroupSearchCondition condition, Long loginUserId) {
         List<Group> groups = groupQueryRepository.searchGroup(condition);
-
-        return groups.stream()
+        List<GroupInfo> groupInfos = groups.stream()
                 .map(group -> {
                     // 기술 스택 조회
                     List<String> skills = skillRepository.findByGroup(group).stream()
@@ -159,26 +159,30 @@ public class GroupService {
                                 return response;
                             })
                             .toList();
-
-
                     boolean isBookmark = false;
                     if(loginUserId != null){
                         if(bookmarkRepository.findByGroupAndUserId(group, loginUserId) != null) isBookmark = true;
                     }
-
                     // GroupInfo 생성
                     GroupInfo groupInfo = GroupInfo.of(group, skillIdx, positionIdx, userList, isBookmark);
-
-
 
                     // 작성자 정보 조회
                     log.debug("userId : {}", group.getUserId());
 //                    UserInfo userInfo = userManager.findNodeUser(group.getUserId());
 
                     // 응답 객체 생성
-                    return GroupInfoResponse.of(groupInfo);
+                    return groupInfo;
                 })
                 .toList();
+        boolean hasNext = false;
+        Long nextCursor = 0L;
+        if(condition.getSize() != null){
+            hasNext = groups.size() > condition.getSize();
+            nextCursor = groupInfos.isEmpty() ? null : groups.get(groups.size() - 1).getGroupId();
+        }
+
+        GroupPagingResponse result = new GroupPagingResponse(groupInfos, hasNext, nextCursor);
+        return result;
     }
 
 

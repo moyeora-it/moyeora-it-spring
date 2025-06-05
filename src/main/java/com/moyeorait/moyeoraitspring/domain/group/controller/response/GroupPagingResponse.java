@@ -1,0 +1,20 @@
+package com.moyeorait.moyeoraitspring.domain.group.controller.response;
+
+import com.moyeorait.moyeoraitspring.domain.group.service.info.GroupInfo;
+import com.moyeorait.moyeoraitspring.domain.reply.service.dto.ReplyInfo;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+import java.util.List;
+
+@ToString
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+public class GroupPagingResponse {
+    List<GroupInfo> items;
+    boolean hasNext;
+    Long cursor;
+}
