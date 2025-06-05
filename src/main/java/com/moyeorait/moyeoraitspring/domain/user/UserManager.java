@@ -19,7 +19,7 @@ public class UserManager {
     RestTemplate restTemplate;
     public UserInfo findNodeUser(Long userId){
         String url = NODE_USERINFO_URL+userId;
-
+        log.debug("url : {}", url);
         ResponseEntity<NodeUserInfoResponse2> response = restTemplate.exchange(
                 url,
                 HttpMethod.GET,
