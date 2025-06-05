@@ -14,10 +14,12 @@ import com.moyeorait.moyeoraitspring.domain.user.UserService;
 import com.moyeorait.moyeoraitspring.domain.waitinglist.repository.WaitingList;
 import com.moyeorait.moyeoraitspring.domain.waitinglist.repository.WaitingListRepository;
 import com.moyeorait.moyeoraitspring.domain.waitinglist.service.WaitingListService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
+@Slf4j
 @Service
 public class GroupJoinManager {
 

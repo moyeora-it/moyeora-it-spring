@@ -232,6 +232,8 @@ class GroupServiceTest {
 
         GroupSearchCondition condition = GroupSearchCondition.builder()
                 .keyword("스터디")
+                .cursor(0L)
+                .size(10000)
                 .build();
 
 

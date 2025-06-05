@@ -41,7 +41,10 @@ class GroupQueryRepositoryImplTest {
 
         GroupSearchCondition condition = GroupSearchCondition.builder()
                 .keyword("Title")
-                .type("STUDY").build();
+                .type("STUDY")
+                .size(10000)
+                .cursor(0L)
+                .build();
 
         List<Group> result = groupQueryRepository.searchGroup(condition);
         Assertions.assertThat(result.size()).isEqualTo(4);
