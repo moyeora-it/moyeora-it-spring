@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 public class CreateGroupRequest {
     String title;
-    LocalDateTime deadLine;
+    LocalDateTime deadline;
     LocalDateTime startDate;
     LocalDateTime endDate;
     Integer maxParticipants;

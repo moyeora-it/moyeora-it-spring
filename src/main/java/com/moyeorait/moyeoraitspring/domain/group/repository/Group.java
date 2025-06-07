@@ -66,7 +66,7 @@ public class Group extends BaseTimeEntity {
         this.status = true;
         this.type = request.getType();
         this.views = 0;
-        this.deadline = request.getDeadLine();
+        this.deadline = request.getDeadline();
         this.startDate = request.getStartDate();
         this.endDate = request.getEndDate();
     }
