@@ -8,6 +8,7 @@ import com.moyeorait.moyeoraitspring.commons.response.ApiResponse;
 import com.moyeorait.moyeoraitspring.domain.user.UserException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jdk.jshell.spi.ExecutionControl;
@@ -91,8 +92,19 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             log.debug("header : {}", header);
             return header.substring(7);
         }
-        log.debug("Authorization 헤더가 없거나, Besarer토큰이 없습니다.");
+        // 2. 쿠키에서 accessToken 추출
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("accessToken".equals(cookie.getName())) {
+                    log.debug("accessToken from cookie: {}", cookie.getValue());
+                    return cookie.getValue();
+                }
+            }
+        }
+
+        log.debug("토큰이 없습니다. (Authorization, Cookie 모두 없음)");
         return null;
+
     }
 
     private String findUserInfoByTokenAndNode(String token) {
