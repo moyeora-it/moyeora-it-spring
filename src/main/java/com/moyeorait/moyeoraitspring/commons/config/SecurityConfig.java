@@ -55,7 +55,7 @@ public class SecurityConfig {
                 )); // 실제 클라이언트 도메인 지정
         config.setAllowCredentials(true); // Authorization 헤더 사용 시 true
         config.setAllowedHeaders(List.of("*")); // Authorization 포함
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
