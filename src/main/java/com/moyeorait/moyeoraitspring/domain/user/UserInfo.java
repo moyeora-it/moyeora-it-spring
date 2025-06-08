@@ -26,7 +26,7 @@ public class UserInfo {
         return UserInfo.builder()
                 .userId(userId)
                 .nickname(Optional.ofNullable(user.getNickname()).orElse(""))
-                .profileImage(Optional.ofNullable(user.getProfile_image()).orElse(""))
+                .profileImage(Optional.ofNullable(user.getProfileImage()).orElse(""))
                 .email(Optional.ofNullable(user.getEmail()).orElse(""))
                 .build();
     }
