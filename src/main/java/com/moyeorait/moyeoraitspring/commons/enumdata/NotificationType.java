@@ -1,0 +1,15 @@
+package com.moyeorait.moyeoraitspring.commons.enumdata;
+
+public enum NotificationType {
+    GROUP_HAS_PARTICIPANT,
+    CONFIRMED_PARTICIPANT_CANCELED,
+    APPLY_APPROVED,
+    APPLY_REJECTED,
+    FULL_CAPACITY,
+    FOLLOWER_ADDED,
+    APPLY_CANCELED,
+    COMMENT_RECEIVED,
+    FOLLOWER_CREATE_GROUP,
+    REJECTED_GROUP,
+    WITHIN_24_HOUR
+}

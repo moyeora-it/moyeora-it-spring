@@ -1,5 +1,6 @@
 package com.moyeorait.moyeoraitspring.domain.reply.service;
 
+import com.moyeorait.moyeoraitspring.commons.enumdata.NotificationType;
 import com.moyeorait.moyeoraitspring.commons.exception.CustomException;
 import com.moyeorait.moyeoraitspring.domain.group.exception.GroupException;
 import com.moyeorait.moyeoraitspring.domain.group.repository.Group;
@@ -18,6 +19,7 @@ import com.moyeorait.moyeoraitspring.domain.reply.repository.condition.ReplySear
 import com.moyeorait.moyeoraitspring.domain.user.UserException;
 import com.moyeorait.moyeoraitspring.domain.user.UserInfo;
 import com.moyeorait.moyeoraitspring.domain.user.UserManager;
+import com.moyeorait.moyeoraitspring.domain.user.notification.NotificationManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,12 +43,21 @@ public class ReplyService {
     @Autowired
     UserManager userManager;
 
+
+    @Autowired
+    NotificationManager notificationManager;
+
     public Long saveReply(ReplySaveRequest request) {
         Group group = groupRepository.findById(request.getGroupId()).get();
         Reply parentReply = request.getParentId() == null? null: replyRepository.findById(request.getParentId()).get();
         Reply reply = Reply.of(request, group, parentReply);
 
         replyRepository.save(reply);
+
+        Long groupId = group.getGroupId();
+        String url = String.format("/group/%d", groupId);
+        notificationManager.sendNotification(NotificationType.COMMENT_RECEIVED, group.getUserId(), url);
+
         return reply.getReplyId();
     }
 
