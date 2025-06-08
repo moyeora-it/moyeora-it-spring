@@ -1,6 +1,7 @@
 package com.moyeorait.moyeoraitspring.commons.enumdata;
 
 import java.util.List;
+import java.util.Objects;
 
 public enum SkillEnum {
     Java,
@@ -21,6 +22,7 @@ public enum SkillEnum {
     public static List<String> createStringList(List<Integer> skills) {
         if(skills == null || skills.isEmpty()) return null;
         return skills.stream()
+                .filter(Objects::nonNull)
                 .map(index -> String.valueOf(SkillEnum.values()[index])).toList();
     }
 }
