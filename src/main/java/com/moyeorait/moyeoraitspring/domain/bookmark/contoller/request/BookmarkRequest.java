@@ -8,5 +8,5 @@ import org.springframework.web.bind.annotation.GetMapping;
 @ToString
 public class BookmarkRequest {
     Long groupId;
-    boolean isBookmark;
+    boolean bookmark;
 }

@@ -23,6 +23,7 @@ public class BookmarkService {
     public void updateBookmark(BookmarkRequest request, Long userId) {
         Group findgroup = groupRepository.findById(request.getGroupId()).get();
         log.debug("findGroup : {}", findgroup);
+        log.debug("request : {}", request);
         if(request.isBookmark()){
             Bookmark bookmark = new Bookmark(findgroup, userId);
             bookmarkRepository.save(bookmark);
