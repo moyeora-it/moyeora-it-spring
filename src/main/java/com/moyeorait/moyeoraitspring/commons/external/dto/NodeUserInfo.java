@@ -13,6 +13,6 @@ public class NodeUserInfo {
     private String id;
     private String email;
     private String nickname;
-    private String profile_image;
+    private String profileImage;
     private double averageRating;
 }
