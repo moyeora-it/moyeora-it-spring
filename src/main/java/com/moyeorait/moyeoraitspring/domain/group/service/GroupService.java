@@ -130,7 +130,7 @@ public class GroupService {
 
 
         GroupInfoJoinResponse result = GroupInfoJoinResponse.of(groupInfo, userInfo, isApplicant, isJoined);
-
+        log.debug("그룹 상세정보조회 반환 : {}", result);
         return result;
     }
 

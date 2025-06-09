@@ -30,9 +30,11 @@ public class BookmarkService {
         log.debug("findGroup : {}", findgroup);
         log.debug("request : {}", request);
         if(request.isBookmark()){
+            if(bookmarkRepository.existsByGroupAndUserId(findgroup, userId)) return;
             Bookmark bookmark = new Bookmark(findgroup, userId);
             bookmarkRepository.save(bookmark);
         }else{
+            if(!bookmarkRepository.existsByGroupAndUserId(findgroup, userId)) return;
             Bookmark bookmark = bookmarkRepository.findByGroupAndUserId(findgroup, userId);
             bookmarkRepository.delete(bookmark);
         }
@@ -44,7 +46,8 @@ public class BookmarkService {
         for(Long groupId : bookmarks){
             Group group = groupRepository.findById(groupId).orElseThrow(() -> new CustomException(GroupException.GROUP_NOT_FOUND));
 
-            boolean exists = bookmarkRepository.existsByGroupAndUserId(group, userId);if (!exists) {
+            boolean exists = bookmarkRepository.existsByGroupAndUserId(group, userId);
+            if (!exists) {
                 Bookmark bookmark = new Bookmark(group, userId);
                 bookmarkRepository.save(bookmark);
             }
