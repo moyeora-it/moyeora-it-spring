@@ -52,11 +52,21 @@ public class ReplyService {
         Reply parentReply = request.getParentId() == null? null: replyRepository.findById(request.getParentId()).get();
         Reply reply = Reply.of(request, group, parentReply);
 
-        replyRepository.save(reply);
+        Reply savedReply = replyRepository.save(reply);
 
         Long groupId = group.getGroupId();
-        String url = String.format("/group/%d", groupId);
-        notificationManager.sendNotification(NotificationType.COMMENT_RECEIVED, group.getUserId(), url);
+
+        // 댓글인경우
+        if(parentReply == null){
+            String url = String.format("/groups/%d?replyId=%d", groupId, savedReply.getReplyId());
+            notificationManager.sendNotification(NotificationType.COMMENT_RECEIVED, group.getUserId(), url);
+        }
+        // 대댓글인 경우
+        else{
+            String url = String.format("/groups/%d?replyId=%d&rereplyId=%d", groupId, parentReply.getReplyId(), savedReply.getReplyId());
+            notificationManager.sendNotification(NotificationType.COMMENT_RECEIVED, group.getUserId(), url);
+            notificationManager.sendNotification(NotificationType.COMMENT_RECEIVED, parentReply.getUserId(), url);
+        }
 
         return reply.getReplyId();
     }

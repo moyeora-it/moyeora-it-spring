@@ -1,5 +1,6 @@
 package com.moyeorait.moyeoraitspring.domain.group.service;
 
+import com.moyeorait.moyeoraitspring.commons.enumdata.NotificationType;
 import com.moyeorait.moyeoraitspring.commons.enumdata.PositionEnum;
 import com.moyeorait.moyeoraitspring.commons.enumdata.SkillEnum;
 import com.moyeorait.moyeoraitspring.commons.exception.CustomException;
@@ -26,6 +27,7 @@ import com.moyeorait.moyeoraitspring.domain.skill.repository.SkillRepository;
 import com.moyeorait.moyeoraitspring.domain.user.UserInfo;
 import com.moyeorait.moyeoraitspring.domain.user.UserManager;
 import com.moyeorait.moyeoraitspring.domain.user.UserService;
+import com.moyeorait.moyeoraitspring.domain.user.notification.NotificationManager;
 import com.moyeorait.moyeoraitspring.domain.waitinglist.repository.WaitingList;
 import com.moyeorait.moyeoraitspring.domain.waitinglist.repository.WaitingListRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -51,7 +54,7 @@ public class GroupService {
     private final WaitingListRepository waitingListRepository;
     private final ReplyRepository replyRepository;
     private final BookmarkRepository bookmarkRepository;
-
+    private final NotificationManager notificationManager;
 
     public Long createGroup(CreateGroupRequest request, Long userId) {
         Group group = new Group(request, userId);
@@ -258,12 +261,24 @@ public class GroupService {
     public void deleteGroupByGroupId(Long groupId) {
         Group group = groupRepository.findById(groupId).get();
 
+        List<WaitingList> waitingLists = waitingListRepository.findByGroup(group);
+        List<Participant> participants = participantRepository.findByGroup(group);
+
+        List<Long> userIds = new ArrayList<>();
+        userIds.addAll(waitingLists.stream().map(WaitingList::getUserId).toList());
+        userIds.addAll(participants.stream().map(Participant::getUserId).toList());
+
+
         waitingListRepository.deleteByGroup(group);
         participantRepository.deleteByGroup(group);
         replyRepository.deleteByGroup(group);
         skillRepository.deleteByGroup(group);
         positionRepository.deleteByGroup(group);
         groupRepository.delete(group);
+
+        for(Long userId : userIds){
+            notificationManager.sendNotification(NotificationType.APPLY_CANCELED, userId, "");
+        }
 
         log.debug("그룹 삭제가 완료되었습니다.");
 

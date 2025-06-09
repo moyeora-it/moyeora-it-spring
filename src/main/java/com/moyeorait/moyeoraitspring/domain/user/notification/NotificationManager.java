@@ -23,9 +23,15 @@ public class NotificationManager {
     private final RestTemplate restTemplate;
 
     private static final Map<NotificationType, NotificationTemplate> templateMap = Map.ofEntries(
-            Map.entry(NotificationType.GROUP_HAS_PARTICIPANT, new NotificationTemplate("새로운 참가자가 그룹에 참여했습니다.", "/groups/%d/participants")),
-            Map.entry(NotificationType.CONFIRMED_PARTICIPANT_CANCELED, new NotificationTemplate("확정된 참가자가 취소했습니다.", "/groups/%d")),
-            Map.entry(NotificationType.COMMENT_RECEIVED, new NotificationTemplate("새로운 댓글이 달렸습니다.", "/groups/%d#comment-%d")),
+            Map.entry(NotificationType.GROUP_HAS_PARTICIPANT,
+                    new NotificationTemplate("새로운 참가자가 그룹에 참여했습니다.", "/groups/%d/participants")),
+
+            Map.entry(NotificationType.CONFIRMED_PARTICIPANT_CANCELED,
+                    new NotificationTemplate("확정된 참가자가 취소했습니다.", "/groups/%d")),
+
+            Map.entry(NotificationType.COMMENT_RECEIVED,
+                    new NotificationTemplate("새로운 댓글이 달렸습니다.", "/groups/%d#comment-%d")),
+
             Map.entry(NotificationType.APPLY_APPROVED,
                     new NotificationTemplate("모임 참가 신청이 승인되었습니다.", "/groups/%d")),
 

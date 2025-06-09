@@ -75,12 +75,11 @@ public class GroupJoinManager {
 
         if(request.getStatus().equals("approve")){
             if(group.getCurrentParticipants() >= group.getMaxParticipants())  throw new CustomException(GroupException.GROUP_CAPACITY_EXCEEDED);
-            else{
-                participantService.addUserToGroup(group, request.getUserId());
-            }
+            participantService.addUserToGroup(group, request.getUserId());
         }else if(request.getStatus().equals("deny")){
-            WaitingList waitingList = waitingListService.findByGroupAndUserId(group, request.getUserId());
-            waitingListService.deleteWaitingList(waitingList);
+            participantService.denyToGroup(request.getUserId());
         }
+        WaitingList waitingList = waitingListService.findByGroupAndUserId(group, request.getUserId());
+        waitingListService.deleteWaitingList(waitingList);
     }
 }
