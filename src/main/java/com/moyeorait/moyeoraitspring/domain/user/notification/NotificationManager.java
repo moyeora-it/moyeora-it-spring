@@ -65,7 +65,7 @@ public class NotificationManager {
         String url = targetUrl; // args: groupId, commentId 등
 
         NotificationRequest request = new NotificationRequest(targetUserId, type.name(), message, url);
-
+        log.debug("알림 전송 데이터 : {}", request);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<NotificationRequest> entity = new HttpEntity<>(request, headers);

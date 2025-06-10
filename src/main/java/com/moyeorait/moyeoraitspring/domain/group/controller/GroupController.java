@@ -71,7 +71,7 @@ public class GroupController {
             @RequestParam(required = false) String type,
             @RequestParam(required = false) String search,
             @RequestParam Integer size,
-            @RequestParam Long cursor,
+            @RequestParam(required = false) Long cursor,
             @Login(required = false) Long userId
     ){
         List<String> skillList = SkillEnum.createStringList(skill);
@@ -82,7 +82,7 @@ public class GroupController {
                 .skill(skillList)
                 .position(positionList)
                 .type(type)
-                .size(size+1) // hasNext판별을 위해 미리 +1
+                .size(size)
                 .cursor(cursor)
                 .keyword(search).build();
         GroupPagingResponse result = groupService.searchGroups(condition, userId);
@@ -120,7 +120,7 @@ public class GroupController {
             @RequestParam(required = false) String type,
             @RequestParam(required = false) String status,
             @RequestParam Integer size,
-            @RequestParam Long cursor,
+            @RequestParam(required = false) Long cursor,
             @RequestParam(required = false) String search,
             @Login Long userId
     ){

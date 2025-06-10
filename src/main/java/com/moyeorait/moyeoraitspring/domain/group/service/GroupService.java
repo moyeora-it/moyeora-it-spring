@@ -38,6 +38,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.moyeorait.moyeoraitspring.commons.enumdata.NotificationType.APPLY_CANCELED;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -55,6 +57,7 @@ public class GroupService {
     private final ReplyRepository replyRepository;
     private final BookmarkRepository bookmarkRepository;
     private final NotificationManager notificationManager;
+
 
     public Long createGroup(CreateGroupRequest request, Long userId) {
         Group group = new Group(request, userId);
@@ -139,7 +142,16 @@ public class GroupService {
     }
 
     public GroupPagingResponse searchGroups(GroupSearchCondition condition, Long loginUserId) {
-        List<Group> groups = groupQueryRepository.searchGroup(condition);
+        List<Long> groupIds = groupQueryRepository.searchGroupIds(condition);
+
+        boolean hasNext = groupIds.size() > condition.getSize();
+        if (hasNext) {
+            groupIds = groupIds.subList(0, condition.getSize());
+        }
+
+        List<Group> groups = groupQueryRepository.searchGroupsByIds(groupIds, condition.getSort(), condition.getOrder());
+        log.debug("findGroupSize : {}", groups.size());
+
         List<GroupInfo> groupInfos = groups.stream()
                 .map(group -> {
                     // 기술 스택 조회
@@ -177,7 +189,6 @@ public class GroupService {
                     return groupInfo;
                 })
                 .toList();
-        boolean hasNext = false;
         Long nextCursor = 0L;
         if(condition.getSize() != null){
             hasNext = groups.size() > condition.getSize();

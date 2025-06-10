@@ -9,7 +9,9 @@ import com.moyeorait.moyeoraitspring.domain.skill.repository.QSkill;
 import com.moyeorait.moyeoraitspring.domain.waitinglist.repository.QWaitingList;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryFactory;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Path;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.JPQLQuery;
@@ -18,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
+import java.util.Collections;
 import java.util.List;
 
 @Repository
@@ -43,11 +46,11 @@ public class GroupQueryRepositoryImpl implements GroupQueryRepository{
                         titleContains(condition.getKeyword()),
                         typeEq(condition.getType()),
                         skillIn(condition.getSkill()),
-                        positionIn(condition.getPosition())
+                        positionIn(condition.getPosition()),
+                        cursorCondition(condition.getCursor(), condition.getOrder())
                 )
                 .orderBy(orderBy(condition.getSort(), condition.getOrder(), group))
-                .orderBy(orderBy(condition.getSort(), condition.getOrder()))
-                .limit(condition.getSize() + 1)
+                .limit(condition.getSize()+1)
                 .fetch();
     }
 
@@ -88,6 +91,61 @@ public class GroupQueryRepositoryImpl implements GroupQueryRepository{
 
         return query.fetch();
     }
+
+    @Override
+    public List<Long> searchGroupIds(GroupSearchCondition condition) {
+        OrderSpecifier<?> orderSpecifier = orderBy(condition.getSort(), condition.getOrder(), group);
+
+        // 정렬 기준에 따라 함께 SELECT
+        Path<?> sortPath = getSortPath(condition.getSort(), group);
+
+        List<Tuple> tuples = queryFactory
+                .select(group.groupId, sortPath)
+                .from(group)
+                .leftJoin(skill).on(skill.group.eq(group))
+                .leftJoin(position).on(position.group.eq(group))
+                .where(
+                        titleContains(condition.getKeyword()),
+                        typeEq(condition.getType()),
+                        skillIn(condition.getSkill()),
+                        positionIn(condition.getPosition()),
+                        cursorCondition(condition.getCursor(), condition.getOrder())
+                )
+                .distinct()
+                .orderBy(orderSpecifier)
+                .limit(condition.getSize() + 1)
+                .fetch();
+
+        return tuples.stream()
+                .map(tuple -> tuple.get(group.groupId))
+                .toList();
+    }
+
+    private Path<?> getSortPath(String sort, QGroup group) {
+        if ("start_date".equalsIgnoreCase(sort)) {
+            return group.startDate;
+        } else if ("end_date".equalsIgnoreCase(sort)) {
+            return group.endDate;
+        } else if ("deadline".equalsIgnoreCase(sort)) {
+            return group.deadline;
+        } else {
+            return group.createdAt; // 기본 정렬 필드
+        }
+    }
+
+    @Override
+    public List<Group> searchGroupsByIds(List<Long> ids, String sort, String order) {
+        if (ids == null || ids.isEmpty()) return Collections.emptyList();
+
+        return queryFactory
+                .select(group)
+                .from(group)
+                .where(group.groupId.in(ids))
+                .orderBy(orderBy(sort, order, group))
+                .fetch();
+    }
+
+
     private BooleanExpression cursorCondition(Long cursor, String order) {
         if (cursor == null) return null;
         if ("desc".equalsIgnoreCase(order)) {
