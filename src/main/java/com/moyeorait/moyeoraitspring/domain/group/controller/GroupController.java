@@ -85,6 +85,7 @@ public class GroupController {
                 .size(size)
                 .cursor(cursor)
                 .keyword(search).build();
+        log.debug("size : {}", size);
         GroupPagingResponse result = groupService.searchGroups(condition, userId);
         return ApiPageResponse.success(result.getItems(), result.isHasNext(), result.getCursor());
     }

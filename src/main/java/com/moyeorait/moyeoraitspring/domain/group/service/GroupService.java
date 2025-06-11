@@ -143,6 +143,8 @@ public class GroupService {
 
     public GroupPagingResponse searchGroups(GroupSearchCondition condition, Long loginUserId) {
         List<Long> groupIds = groupQueryRepository.searchGroupIds(condition);
+        log.debug("groupIdx.size : {}", groupIds.size());
+        log.debug("condition.size : {}", condition.getSize());
 
         boolean hasNext = groupIds.size() > condition.getSize();
         if (hasNext) {
@@ -191,7 +193,6 @@ public class GroupService {
                 .toList();
         Long nextCursor = 0L;
         if(condition.getSize() != null){
-            hasNext = groups.size() > condition.getSize();
             nextCursor = groupInfos.isEmpty() ? null : groups.get(groups.size() - 1).getGroupId();
         }
 
