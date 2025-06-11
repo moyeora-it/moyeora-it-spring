@@ -71,7 +71,7 @@ public class GroupJoinManager {
 
     public void manageJoinProcess(JoinManageRequest request, Long groupId, Long createUserId) {
         Group group = groupService.findById(groupId);
-        if(group.getUserId().equals(createUserId)) throw new CustomException(GroupException.USER_FORBIDDEN_ACCESS);
+        if(!group.getUserId().equals(createUserId)) throw new CustomException(GroupException.USER_FORBIDDEN_ACCESS);
 
         if(request.getStatus().equals("approve")){
             if(group.getCurrentParticipants() >= group.getMaxParticipants())  throw new CustomException(GroupException.GROUP_CAPACITY_EXCEEDED);
