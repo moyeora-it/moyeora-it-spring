@@ -202,14 +202,6 @@ public class GroupService {
 
 
     public MyGroupSearchResponse searchMyGroups(MyGroupSearchCondition myCondition) {
-//        int baseSize = myCondition.getCondition().getSize();
-//        List<Group> groups = groupQueryRepository.searchMyGroup(myCondition);
-//        log.debug("groups size : {}", groups.size());
-//        boolean hasNext = groups.size() > myCondition.getCondition().getSize();
-//
-//        if(hasNext){
-//            groups = groups.subList(0, baseSize);
-//        }
         List<Long> groupIds = groupQueryRepository.searchMyGroupIds(myCondition);
         log.debug("groupIds.size : {}", groupIds.size());
         log.debug("conditions.size: {}", myCondition.getCondition().getSize());

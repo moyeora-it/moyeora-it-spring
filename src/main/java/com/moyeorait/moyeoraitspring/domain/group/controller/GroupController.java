@@ -133,7 +133,7 @@ public class GroupController {
                 .skill(skillList)
                 .position(positionList)
                 .type(type)
-                .size(size+1) // hasNext판별을 위해 미리 +1
+                .size(size) // hasNext판별을 위해 미리 +1
                 .cursor(cursor)
                 .keyword(search).build();
         MyGroupSearchCondition myCondition = MyGroupSearchCondition.builder()
