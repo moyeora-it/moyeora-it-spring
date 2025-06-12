@@ -202,14 +202,26 @@ public class GroupService {
 
 
     public MyGroupSearchResponse searchMyGroups(MyGroupSearchCondition myCondition) {
-        int baseSize = myCondition.getCondition().getSize();
-        List<Group> groups = groupQueryRepository.searchMyGroup(myCondition);
-        log.debug("groups size : {}", groups.size());
-        boolean hasNext = groups.size() > myCondition.getCondition().getSize();
+//        int baseSize = myCondition.getCondition().getSize();
+//        List<Group> groups = groupQueryRepository.searchMyGroup(myCondition);
+//        log.debug("groups size : {}", groups.size());
+//        boolean hasNext = groups.size() > myCondition.getCondition().getSize();
+//
+//        if(hasNext){
+//            groups = groups.subList(0, baseSize);
+//        }
+        List<Long> groupIds = groupQueryRepository.searchMyGroupIds(myCondition);
+        log.debug("groupIds.size : {}", groupIds.size());
+        log.debug("conditions.size: {}", myCondition.getCondition().getSize());
 
-        if(hasNext){
-            groups = groups.subList(0, baseSize);
+        boolean hasNext = groupIds.size() > myCondition.getCondition().getSize();
+        if(hasNext) {
+            groupIds = groupIds.subList(0, myCondition.getCondition().getSize());
         }
+
+        List<Group> groups = groupQueryRepository.searchGroupsByIds(groupIds, myCondition.getCondition().getSort(), myCondition.getCondition().getOrder());
+        log.debug("findGroupSize : {}", groups.size());
+
         List<GroupInfoResponse> result = groups.stream().map(group -> {
             // 기술 스택 조회
             List<String> skills = skillRepository.findByGroup(group).stream()

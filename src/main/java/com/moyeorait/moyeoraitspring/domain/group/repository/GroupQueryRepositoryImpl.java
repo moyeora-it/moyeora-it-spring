@@ -145,6 +145,54 @@ public class GroupQueryRepositoryImpl implements GroupQueryRepository{
                 .fetch();
     }
 
+    @Override
+    public List<Long> searchMyGroupIds(MyGroupSearchCondition myCondition) {
+        GroupSearchCondition condition = myCondition.getCondition();
+        Long userId = myCondition.getUserId();
+        String status = myCondition.getStatus();
+
+        OrderSpecifier<?> orderSpecifier = orderBy(condition.getSort(), condition.getOrder(), group);
+        Path<?> sortPath = getSortPath(condition.getSort(), group);
+
+        BooleanBuilder whereBuilder = new BooleanBuilder()
+                .and(titleContains(condition.getKeyword()))
+                .and(typeEq(condition.getType()))
+                .and(skillIn(condition.getSkill()))
+                .and(positionIn(condition.getPosition()))
+                .and(cursorCondition(condition.getCursor(), condition.getOrder()));
+
+        BooleanExpression joinFilter;
+        if ("RECRUITING".equalsIgnoreCase(status)) {
+            joinFilter = waitingList.userId.eq(userId);
+        } else if ("PARTICIPANT".equalsIgnoreCase(status)) {
+            joinFilter = participant.userId.eq(userId);
+        } else {
+            // status가 null이거나 다른 값이면 둘 다 포함
+            joinFilter = waitingList.userId.eq(userId).or(participant.userId.eq(userId));
+        }
+        List<Tuple> tuples = queryFactory
+                .select(group.groupId, sortPath)
+                .from(group)
+                .leftJoin(skill).on(skill.group.eq(group))
+                .leftJoin(position).on(position.group.eq(group))
+                .leftJoin(waitingList).on(waitingList.group.eq(group))
+                .leftJoin(participant).on(participant.group.eq(group))
+                .where(whereBuilder.and(joinFilter))
+                .distinct()
+                .orderBy(orderSpecifier)
+                .limit(condition.getSize() + 1)
+                .fetch();
+
+        return tuples.stream()
+                .map(tuple -> tuple.get(group.groupId))
+                .toList();
+    }
+
+    @Override
+    public List<Group> searchMyGroupsByIds(List<Long> groupIds, String sort, String order) {
+        return List.of();
+    }
+
 
     private BooleanExpression cursorCondition(Long cursor, String order) {
         if (cursor == null) return null;

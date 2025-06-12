@@ -13,4 +13,8 @@ public interface GroupQueryRepository {
     List<Long> searchGroupIds(GroupSearchCondition condition);
 
     List<Group> searchGroupsByIds(List<Long> groupIds, String sort, String order);
+
+    List<Long> searchMyGroupIds(MyGroupSearchCondition myCondition);
+
+    List<Group> searchMyGroupsByIds(List<Long> groupIds, String sort, String order);
 }
