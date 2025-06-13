@@ -1,4 +1,4 @@
-package com.moyeorait.moyeoraitspring.domain.user;
+package com.moyeorait.moyeoraitspring.domain.user.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -22,3 +22,7 @@ logging:
   level:
     root: info
     com.moyeorait.moyeoraitspring: debug
+
+external:
+  node:
+    base-url: https://my-api.sjcpop.com/api/v1/user/

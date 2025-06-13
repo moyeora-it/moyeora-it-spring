@@ -1,8 +1,7 @@
 package com.moyeorait.moyeoraitspring.commons.annotation;
 
 import com.moyeorait.moyeoraitspring.commons.exception.CustomException;
-import com.moyeorait.moyeoraitspring.commons.test.TestException;
-import com.moyeorait.moyeoraitspring.domain.user.UserException;
+import com.moyeorait.moyeoraitspring.domain.user.exception.UserException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;

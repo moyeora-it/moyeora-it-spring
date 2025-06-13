@@ -2,16 +2,14 @@ package com.moyeorait.moyeoraitspring.commons.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.moyeorait.moyeoraitspring.commons.exception.CustomException;
-import com.moyeorait.moyeoraitspring.commons.external.dto.NodeUserInfo;
 import com.moyeorait.moyeoraitspring.commons.external.dto.NodeUserInfoResponse;
 import com.moyeorait.moyeoraitspring.commons.response.ApiResponse;
-import com.moyeorait.moyeoraitspring.domain.user.UserException;
+import com.moyeorait.moyeoraitspring.domain.user.exception.UserException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jdk.jshell.spi.ExecutionControl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.*;
@@ -22,7 +20,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 @Component
 @Slf4j

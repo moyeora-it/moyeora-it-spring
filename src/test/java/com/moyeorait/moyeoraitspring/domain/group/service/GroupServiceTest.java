@@ -1,7 +1,6 @@
 package com.moyeorait.moyeoraitspring.domain.group.service;
 
 import com.moyeorait.moyeoraitspring.domain.group.controller.request.CreateGroupRequest;
-import com.moyeorait.moyeoraitspring.domain.group.controller.response.GroupInfoResponse;
 import com.moyeorait.moyeoraitspring.domain.group.controller.response.GroupPagingResponse;
 import com.moyeorait.moyeoraitspring.domain.group.controller.response.MyGroupSearchResponse;
 import com.moyeorait.moyeoraitspring.domain.group.repository.Group;
@@ -14,7 +13,7 @@ import com.moyeorait.moyeoraitspring.domain.participant.ParticipantRepository;
 import com.moyeorait.moyeoraitspring.domain.reply.controller.request.ReplySaveRequest;
 import com.moyeorait.moyeoraitspring.domain.reply.repository.Reply;
 import com.moyeorait.moyeoraitspring.domain.reply.repository.ReplyRepository;
-import com.moyeorait.moyeoraitspring.domain.user.UserInfo;
+import com.moyeorait.moyeoraitspring.domain.user.dto.UserInfo;
 import com.moyeorait.moyeoraitspring.domain.user.UserManager;
 import com.moyeorait.moyeoraitspring.domain.waitinglist.repository.WaitingListRepository;
 import jakarta.persistence.EntityManager;
@@ -22,9 +21,7 @@ import jakarta.persistence.PersistenceContext;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.mockito.BDDMockito;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -35,7 +32,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 @SpringBootTest

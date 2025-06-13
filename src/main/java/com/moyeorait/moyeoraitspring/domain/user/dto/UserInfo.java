@@ -1,7 +1,6 @@
-package com.moyeorait.moyeoraitspring.domain.user;
+package com.moyeorait.moyeoraitspring.domain.user.dto;
 
 import com.moyeorait.moyeoraitspring.commons.external.dto.NodeUserInfo;
-import com.moyeorait.moyeoraitspring.commons.external.dto.NodeUserInfoResponse;
 import com.moyeorait.moyeoraitspring.commons.external.dto.NodeUserInfoResponse2;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -24,9 +24,8 @@ import com.moyeorait.moyeoraitspring.domain.position.repository.PositionReposito
 import com.moyeorait.moyeoraitspring.domain.reply.repository.ReplyRepository;
 import com.moyeorait.moyeoraitspring.domain.skill.repository.Skill;
 import com.moyeorait.moyeoraitspring.domain.skill.repository.SkillRepository;
-import com.moyeorait.moyeoraitspring.domain.user.UserInfo;
+import com.moyeorait.moyeoraitspring.domain.user.dto.UserInfo;
 import com.moyeorait.moyeoraitspring.domain.user.UserManager;
-import com.moyeorait.moyeoraitspring.domain.user.UserService;
 import com.moyeorait.moyeoraitspring.domain.user.notification.NotificationManager;
 import com.moyeorait.moyeoraitspring.domain.waitinglist.repository.WaitingList;
 import com.moyeorait.moyeoraitspring.domain.waitinglist.repository.WaitingListRepository;
@@ -37,8 +36,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.moyeorait.moyeoraitspring.commons.enumdata.NotificationType.APPLY_CANCELED;
 
 @Service
 @RequiredArgsConstructor
