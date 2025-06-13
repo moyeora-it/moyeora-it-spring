@@ -26,8 +26,6 @@ class ParticipantServiceTest {
 
     @PersistenceContext
     EntityManager entityManager;
-    @Autowired
-    private UserService userService;
 
     @Test
     @DisplayName("유저를 그룹에 추가한다.")

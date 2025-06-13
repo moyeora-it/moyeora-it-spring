@@ -1,7 +1,7 @@
 package com.moyeorait.moyeoraitspring.domain.user.dto;
 
 import com.moyeorait.moyeoraitspring.commons.external.dto.NodeUserInfo;
-import com.moyeorait.moyeoraitspring.commons.external.dto.NodeUserInfoResponse2;
+import com.moyeorait.moyeoraitspring.commons.external.dto.NodeUserInfoResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,7 +19,7 @@ public class UserInfo {
     String profileImage;
     String email;
 
-    public static UserInfo of(NodeUserInfoResponse2 response, Long userId) {
+    public static UserInfo of(NodeUserInfoResponse response, Long userId) {
         NodeUserInfo user = response.getData();
 
         return UserInfo.builder()

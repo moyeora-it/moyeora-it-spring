@@ -45,7 +45,6 @@ public class GroupService {
 
     private final GroupRepository groupRepository;
     private final GroupQueryRepository groupQueryRepository;
-    private final UserService userservice;
     private final SkillRepository skillRepository;
     private final PositionRepository positionRepository;
     private final UserManager userManager;

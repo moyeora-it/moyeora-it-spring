@@ -26,8 +26,6 @@ public class GroupJoinManager {
 
     @Autowired
     WaitingListService waitingListService;
-    @Autowired
-    private UserService userService;
 
     public void joinRequest(Long groupId, Long userId) {
         Group group = groupService.findById(groupId);
