@@ -2,6 +2,7 @@ package com.moyeorait.moyeoraitspring.commons.exception.handler;
 
 import com.moyeorait.moyeoraitspring.commons.exception.CustomException;
 import com.moyeorait.moyeoraitspring.commons.exception.ErrorResponse;
+import com.moyeorait.moyeoraitspring.commons.exception.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,13 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse(false, e.getException().getCode(), e.getException().getMessage()));
     }
 
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ErrorResponse> notFoundExceptionHandler(NotFoundException e){
+        log.error("### NotFoundExceptionHandler : {}", e.getMessage(), e);
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponse(false, e.getException().getCode(), e.getException().getMessage()));
+    }
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<ErrorResponse> customExceptionHandler(MissingServletRequestParameterException e){
         log.error("### CustomExceptionHandler : {}", e.getMessage(), e);

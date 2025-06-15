@@ -4,6 +4,7 @@ import com.moyeorait.moyeoraitspring.commons.enumdata.NotificationType;
 import com.moyeorait.moyeoraitspring.commons.enumdata.PositionEnum;
 import com.moyeorait.moyeoraitspring.commons.enumdata.SkillEnum;
 import com.moyeorait.moyeoraitspring.commons.exception.CustomException;
+import com.moyeorait.moyeoraitspring.commons.exception.NotFoundException;
 import com.moyeorait.moyeoraitspring.domain.bookmark.repository.BookmarkRepository;
 import com.moyeorait.moyeoraitspring.domain.group.controller.request.CreateGroupRequest;
 import com.moyeorait.moyeoraitspring.domain.group.controller.response.GroupInfoJoinResponse;
@@ -88,7 +89,7 @@ public class GroupService {
 
     public GroupInfoJoinResponse findGroupByGroupId(Long groupId, Long loginUserId) {
 
-        Group group = groupRepository.findById(groupId).orElseThrow(() -> new CustomException(
+        Group group = groupRepository.findById(groupId).orElseThrow(() -> new NotFoundException(
                 GroupException.GROUP_NOT_FOUND));
 
         List<String> skills = skillRepository.findByGroup(group).stream()
@@ -245,7 +246,7 @@ public class GroupService {
     }
 
     public List<UserInfo> findUserInfoOfGroup(Long groupId) {
-        Group group = groupRepository.findById(groupId).orElseThrow(() -> new CustomException(
+        Group group = groupRepository.findById(groupId).orElseThrow(() -> new NotFoundException(
                 GroupException.GROUP_NOT_FOUND));
 
         List<Participant> users = participantRepository.findByGroup(group);
@@ -260,7 +261,7 @@ public class GroupService {
     }
 
     public List<UserInfo> findWaitingListOfGroup(Long groupId) {
-        Group group = groupRepository.findById(groupId).orElseThrow(() -> new CustomException(
+        Group group = groupRepository.findById(groupId).orElseThrow(() -> new NotFoundException(
                 GroupException.GROUP_NOT_FOUND));
 
         List<WaitingList> users = waitingListRepository.findByGroup(group);

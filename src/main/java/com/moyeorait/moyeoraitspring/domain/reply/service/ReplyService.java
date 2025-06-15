@@ -2,6 +2,7 @@ package com.moyeorait.moyeoraitspring.domain.reply.service;
 
 import com.moyeorait.moyeoraitspring.commons.enumdata.NotificationType;
 import com.moyeorait.moyeoraitspring.commons.exception.CustomException;
+import com.moyeorait.moyeoraitspring.commons.exception.NotFoundException;
 import com.moyeorait.moyeoraitspring.domain.group.exception.GroupException;
 import com.moyeorait.moyeoraitspring.domain.group.repository.Group;
 import com.moyeorait.moyeoraitspring.domain.group.repository.GroupRepository;
@@ -129,7 +130,7 @@ public class ReplyService {
 
     public void updateReply(ReplyUpdateRequest request) {
 
-        Group group = groupRepository.findById(request.getGroupId()).orElseThrow(() -> new CustomException(GroupException.GROUP_NOT_FOUND));
+        Group group = groupRepository.findById(request.getGroupId()).orElseThrow(() -> new NotFoundException(GroupException.GROUP_NOT_FOUND));
         Reply reply = replyRepository.findById(request.getReplyId()).orElseThrow(() -> new CustomException(ReplyException.REPLY_NOT_FOUND));
         if(reply.getUserId() != request.getUserId()) throw new CustomException(GroupException.USER_FORBIDDEN_ACCESS);
         reply.setContent(request.getContent());

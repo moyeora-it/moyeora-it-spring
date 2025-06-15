@@ -1,6 +1,7 @@
 package com.moyeorait.moyeoraitspring.domain.bookmark;
 
 import com.moyeorait.moyeoraitspring.commons.exception.CustomException;
+import com.moyeorait.moyeoraitspring.commons.exception.NotFoundException;
 import com.moyeorait.moyeoraitspring.domain.bookmark.contoller.request.BookmarkListRequest;
 import com.moyeorait.moyeoraitspring.domain.bookmark.contoller.request.BookmarkRequest;
 import com.moyeorait.moyeoraitspring.domain.bookmark.repository.Bookmark;
@@ -44,7 +45,7 @@ public class BookmarkService {
         List<Long> bookmarks = request.getGroupIds();
 
         for(Long groupId : bookmarks){
-            Group group = groupRepository.findById(groupId).orElseThrow(() -> new CustomException(GroupException.GROUP_NOT_FOUND));
+            Group group = groupRepository.findById(groupId).orElseThrow(() -> new NotFoundException(GroupException.GROUP_NOT_FOUND));
 
             boolean exists = bookmarkRepository.existsByGroupAndUserId(group, userId);
             if (!exists) {
