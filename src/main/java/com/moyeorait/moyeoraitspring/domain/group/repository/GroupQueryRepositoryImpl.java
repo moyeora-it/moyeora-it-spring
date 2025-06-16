@@ -18,15 +18,18 @@ import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
+@Slf4j
 public class GroupQueryRepositoryImpl implements GroupQueryRepository{
 
     private final JPAQueryFactory queryFactory;
@@ -160,6 +163,7 @@ public class GroupQueryRepositoryImpl implements GroupQueryRepository{
 
     @Override
     public List<Long> searchMyGroupIds(MyGroupSearchCondition myCondition) {
+        log.debug("내 그룹 조회 쿼리");
         GroupSearchCondition condition = myCondition.getCondition();
         Long userId = myCondition.getUserId();
         String status = myCondition.getStatus();
@@ -175,12 +179,13 @@ public class GroupQueryRepositoryImpl implements GroupQueryRepository{
                 .and(cursorCondition(condition.getCursor(), condition.getOrder()));
 
         BooleanExpression joinFilter;
+        log.debug("sataus : {}", status);
         if ("RECRUITING".equalsIgnoreCase(status)) {
             joinFilter = waitingList.userId.eq(userId);
         } else if ("PARTICIPANT".equalsIgnoreCase(status)) {
             joinFilter = participant.userId.eq(userId);
         } else if ("ENDED".equalsIgnoreCase(status)) {
-            joinFilter = group.endDate.loe(LocalDate.now().atStartOfDay()); // 오늘 이전이면 종료된 것
+            joinFilter = group.endDate.loe(LocalDateTime.now()); // 오늘 이전이면 종료된 것
         } else {
             // status가 null이거나 다른 값이면 둘 다 포함
             joinFilter = waitingList.userId.eq(userId).or(participant.userId.eq(userId));
