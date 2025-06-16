@@ -13,6 +13,7 @@ import com.querydsl.core.Tuple;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -99,23 +100,34 @@ public class GroupQueryRepositoryImpl implements GroupQueryRepository{
         List<String> requiredSkills = condition.getSkill();
         List<String> requiredPositions = condition.getPosition();
 
+        BooleanBuilder whereBuilder = new BooleanBuilder()
+                .and(titleContains(condition.getKeyword()))
+                .and(typeEq(condition.getType()))
+                .and(cursorCondition(condition.getCursor(), condition.getOrder()));
+
+        if (requiredSkills != null && !requiredSkills.isEmpty()) {
+            whereBuilder.and(skill.skillInfo.in(requiredSkills));
+        }
+        if (requiredPositions != null && !requiredPositions.isEmpty()) {
+            whereBuilder.and(position.positionInfo.in(requiredPositions));
+        }
+
+        BooleanExpression havingExpr = Expressions.TRUE;
+        if (requiredSkills != null && !requiredSkills.isEmpty()) {
+            havingExpr = havingExpr.and(skill.skillInfo.countDistinct().eq((long) requiredSkills.size()));
+        }
+        if (requiredPositions != null && !requiredPositions.isEmpty()) {
+            havingExpr = havingExpr.and(position.positionInfo.countDistinct().eq((long) requiredPositions.size()));
+        }
+
         JPQLQuery<Long> query = queryFactory
                 .select(group.groupId)
                 .from(group)
                 .join(skill).on(skill.group.eq(group))
-                .join(position).on(position.group.eq(group)) // leftJoin → join으로 변경
-                .where(
-                        titleContains(condition.getKeyword()),
-                        typeEq(condition.getType()),
-                        cursorCondition(condition.getCursor(), condition.getOrder()),
-                        skill.skillInfo.in(requiredSkills),
-                        position.positionInfo.in(requiredPositions)
-                )
+                .join(position).on(position.group.eq(group))
+                .where(whereBuilder)
                 .groupBy(group.groupId)
-                .having(
-                        skill.skillInfo.countDistinct().eq((long) requiredSkills.size())
-                                .and(position.positionInfo.countDistinct().eq((long) requiredPositions.size()))
-                )
+                .having(havingExpr)
                 .orderBy(orderSpecifier)
                 .limit(condition.getSize() + 1);
 
