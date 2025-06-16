@@ -285,7 +285,7 @@ public class GroupService {
         userIds.addAll(waitingLists.stream().map(WaitingList::getUserId).toList());
         userIds.addAll(participants.stream().map(Participant::getUserId).toList());
 
-
+        bookmarkRepository.deleteByGroup(group);
         waitingListRepository.deleteByGroup(group);
         participantRepository.deleteByGroup(group);
         replyRepository.deleteByGroup(group);

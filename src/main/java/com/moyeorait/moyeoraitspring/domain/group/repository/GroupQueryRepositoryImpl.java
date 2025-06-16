@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
@@ -95,30 +96,30 @@ public class GroupQueryRepositoryImpl implements GroupQueryRepository{
     @Override
     public List<Long> searchGroupIds(GroupSearchCondition condition) {
         OrderSpecifier<?> orderSpecifier = orderBy(condition.getSort(), condition.getOrder(), group);
+        List<String> requiredSkills = condition.getSkill();
+        List<String> requiredPositions = condition.getPosition();
 
-        // 정렬 기준에 따라 함께 SELECT
-        Path<?> sortPath = getSortPath(condition.getSort(), group);
-
-        List<Tuple> tuples = queryFactory
-                .select(group.groupId, sortPath)
+        JPQLQuery<Long> query = queryFactory
+                .select(group.groupId)
                 .from(group)
-                .leftJoin(skill).on(skill.group.eq(group))
-                .leftJoin(position).on(position.group.eq(group))
+                .join(skill).on(skill.group.eq(group))
+                .join(position).on(position.group.eq(group)) // leftJoin → join으로 변경
                 .where(
                         titleContains(condition.getKeyword()),
                         typeEq(condition.getType()),
-                        skillIn(condition.getSkill()),
-                        positionIn(condition.getPosition()),
-                        cursorCondition(condition.getCursor(), condition.getOrder())
+                        cursorCondition(condition.getCursor(), condition.getOrder()),
+                        skill.skillInfo.in(requiredSkills),
+                        position.positionInfo.in(requiredPositions)
                 )
-                .distinct()
+                .groupBy(group.groupId)
+                .having(
+                        skill.skillInfo.countDistinct().eq((long) requiredSkills.size())
+                                .and(position.positionInfo.countDistinct().eq((long) requiredPositions.size()))
+                )
                 .orderBy(orderSpecifier)
-                .limit(condition.getSize() + 1)
-                .fetch();
+                .limit(condition.getSize() + 1);
 
-        return tuples.stream()
-                .map(tuple -> tuple.get(group.groupId))
-                .toList();
+        return query.fetch();
     }
 
     private Path<?> getSortPath(String sort, QGroup group) {
@@ -166,6 +167,8 @@ public class GroupQueryRepositoryImpl implements GroupQueryRepository{
             joinFilter = waitingList.userId.eq(userId);
         } else if ("PARTICIPANT".equalsIgnoreCase(status)) {
             joinFilter = participant.userId.eq(userId);
+        } else if ("ENDED".equalsIgnoreCase(status)) {
+            joinFilter = group.endDate.loe(LocalDate.now().atStartOfDay()); // 오늘 이전이면 종료된 것
         } else {
             // status가 null이거나 다른 값이면 둘 다 포함
             joinFilter = waitingList.userId.eq(userId).or(participant.userId.eq(userId));

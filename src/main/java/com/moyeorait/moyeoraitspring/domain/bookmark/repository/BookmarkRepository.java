@@ -8,4 +8,6 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
     Bookmark findByGroupAndUserId(Group findGroup, Long userId);
 
     boolean existsByGroupAndUserId(Group group, Long userId);
+
+    void deleteByGroup(Group group);
 }
