@@ -153,7 +153,7 @@ public class GroupController {
                 .build(), null);
 
         List<GroupInfo> result = groupResponse.getItems().stream()
-                .filter(group -> group.getDeadline() != null && !group.getDeadline().isAfter(LocalDateTime.now()))
+                .filter(group -> group.getDeadline() != null && group.getDeadline().isAfter(LocalDateTime.now()))
                 .toList();
 
         return ApiResponse.success(result);
