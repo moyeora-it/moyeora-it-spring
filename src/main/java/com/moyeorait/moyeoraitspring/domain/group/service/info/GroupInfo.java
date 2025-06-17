@@ -2,7 +2,7 @@ package com.moyeorait.moyeoraitspring.domain.group.service.info;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.moyeorait.moyeoraitspring.domain.group.repository.Group;
-import com.moyeorait.moyeoraitspring.domain.user.UserInfo;
+import com.moyeorait.moyeoraitspring.domain.user.dto.UserInfo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

@@ -2,7 +2,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: health, info  # 필요한 경우 "*"로 전체 노출 가능
+        include: health, info, prometheus   # 필요한 경우 "*"로 전체 노출 가능
   endpoint:
     health:
       show-details: always  # 상태 상세보기 (DB, Redis 등)
@@ -22,3 +22,7 @@ logging:
   level:
     root: info
     com.moyeorait.moyeoraitspring: debug
+
+external:
+  node:
+    base-url: https://my-api.sjcpop.com/api/v1/user/

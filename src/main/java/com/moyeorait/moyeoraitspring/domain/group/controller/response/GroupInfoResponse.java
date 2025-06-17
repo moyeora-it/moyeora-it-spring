@@ -1,7 +1,6 @@
 package com.moyeorait.moyeoraitspring.domain.group.controller.response;
 
 import com.moyeorait.moyeoraitspring.domain.group.service.info.GroupInfo;
-import com.moyeorait.moyeoraitspring.domain.user.UserInfo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;

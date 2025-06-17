@@ -7,7 +7,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class NodeUserInfoResponse2 {
-    private NodeStatus status;
-    private NodeUserInfo data;
+public class NodeMyInfoResponse {
+    private boolean success;
+    private NodeItemsWrapper items;
 }

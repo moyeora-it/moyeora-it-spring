@@ -1,7 +1,7 @@
 package com.moyeorait.moyeoraitspring.domain.reply.service.dto;
 
 import com.moyeorait.moyeoraitspring.domain.reply.repository.Reply;
-import com.moyeorait.moyeoraitspring.domain.user.UserInfo;
+import com.moyeorait.moyeoraitspring.domain.user.dto.UserInfo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

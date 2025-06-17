@@ -1,17 +1,15 @@
 package com.moyeorait.moyeoraitspring.commons.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.moyeorait.moyeoraitspring.commons.exception.CustomException;
-import com.moyeorait.moyeoraitspring.commons.external.dto.NodeUserInfo;
-import com.moyeorait.moyeoraitspring.commons.external.dto.NodeUserInfoResponse;
 import com.moyeorait.moyeoraitspring.commons.response.ApiResponse;
-import com.moyeorait.moyeoraitspring.domain.user.UserException;
+import com.moyeorait.moyeoraitspring.domain.user.UserManager;
+import com.moyeorait.moyeoraitspring.domain.user.exception.UserException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jdk.jshell.spi.ExecutionControl;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.*;
@@ -22,22 +20,19 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
     private static final String JWT_AUTH_URL = "https://my-api.sjcpop.com/api/v1/user/info";
     private static final AntPathMatcher pathMatcher = new AntPathMatcher();
     private final RedisTemplate<String, String> redisTemplate;
     private final RestTemplate restTemplate;
-    private final ObjectMapper objectMapper
-            ;
-    public JwtAuthFilter(RedisTemplate<String, String> redisTemplate, ObjectMapper objectMapper) {
-        this.redisTemplate = redisTemplate;
-        this.objectMapper = objectMapper;
-        this.restTemplate = new RestTemplate();
-    }
+    private final ObjectMapper objectMapper;
+    private final UserManager userManager;
+
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -66,7 +61,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         String userId = null;
         try {
-            userId = findUserInfoByTokenAndNode(token);
+            userId = userManager.findUserInfoByTokenAndNode(token);
         } catch (Exception e){
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json");
@@ -107,35 +102,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     }
 
-    private String findUserInfoByTokenAndNode(String token) {
-        log.debug("findUserOfNodeServer token:" , token);
-        try{
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("Cookie", "accessToken=" + token);
 
-            HttpEntity<String> entity = new HttpEntity<String>(headers);
-
-            ResponseEntity<NodeUserInfoResponse> response = restTemplate.exchange(
-                    JWT_AUTH_URL,
-                    HttpMethod.GET,
-                    entity,
-                    NodeUserInfoResponse.class
-            );
-            NodeUserInfoResponse result = response.getBody();
-            log.debug("result : {}", result);
-
-            if(response.getStatusCode() == HttpStatus.OK && response.getBody() != null){
-                String userId = response.getBody().getItems().getItems().getId();
-                return userId;
-            }
-
-        } catch (Exception e){
-
-            log.error(e.getMessage());
-            throw new CustomException(UserException.USER_AUTHORIZE_EXCEPTION);
-        }
-        return null;
-    }
 
     private static final List<FilterTarget> FILTERED_TARGETS = List.of(
             new FilterTarget("POST", "/api/v2/groups"),

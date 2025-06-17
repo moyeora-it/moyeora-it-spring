@@ -2,12 +2,9 @@ package com.moyeorait.moyeoraitspring.domain.participant.service;
 
 import com.moyeorait.moyeoraitspring.domain.group.repository.Group;
 import com.moyeorait.moyeoraitspring.domain.group.repository.GroupRepository;
-import com.moyeorait.moyeoraitspring.domain.group.service.GroupService;
 import com.moyeorait.moyeoraitspring.domain.participant.repository.Participant;
-import com.moyeorait.moyeoraitspring.domain.user.UserService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.validation.GroupSequence;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,8 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
@@ -31,8 +26,6 @@ class ParticipantServiceTest {
 
     @PersistenceContext
     EntityManager entityManager;
-    @Autowired
-    private UserService userService;
 
     @Test
     @DisplayName("유저를 그룹에 추가한다.")
