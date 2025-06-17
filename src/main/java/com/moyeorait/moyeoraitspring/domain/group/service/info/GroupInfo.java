@@ -31,9 +31,9 @@ public class GroupInfo {
     boolean bookmark;
     boolean autoAllow;
     String type;
+    Long userId;
 
-
-//    Long userId;
+    
 //    Integer currentParticipants;
 //    boolean status;
 //    Integer views;
@@ -52,7 +52,7 @@ public class GroupInfo {
                 .createdAt(group.getCreatedAt())
                 .autoAllow(group.getAutoAllow())
                 .type(group.getType())
-//                .userId(group.getUserId())
+                .userId(group.getUserId())
 //                .currentParticipants(group.getCurrentParticipants())
 //                .status(group.getStatus())
 //                .views(group.getViews())
@@ -63,7 +63,7 @@ public class GroupInfo {
                 .id(group.getGroupId())
                 .title(group.getTitle())
                 .description(group.getContent())
-//                .userId(group.getUserId())
+                .userId(group.getUserId())
                 .autoAllow(group.getAutoAllow())
 //                .currentParticipants(group.getCurrentParticipants())
                 .maxParticipants(group.getMaxParticipants())
