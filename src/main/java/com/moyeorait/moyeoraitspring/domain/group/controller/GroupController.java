@@ -29,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -146,9 +147,16 @@ public class GroupController {
     @Operation(summary = "추천 그룹 조회", description = "유저 정보를 기반으로 추천된 그룹 리스트를 반환합니다.")
     @GetMapping("/recommend")
     public ApiResponse<List<GroupInfo>> recommendGroups(){
-        GroupPagingResponse result = groupService.searchGroups(GroupSearchCondition.builder().cursor(0L).size(100000).build(), null);
+        GroupPagingResponse groupResponse = groupService.searchGroups(GroupSearchCondition.builder()
+                .cursor(0L)
+                .size(100000)
+                .build(), null);
 
-        return ApiResponse.success(result.getItems());
+        List<GroupInfo> result = groupResponse.getItems().stream()
+                .filter(group -> group.getDeadline() != null && !group.getDeadline().isAfter(LocalDateTime.now()))
+                .toList();
+
+        return ApiResponse.success(result);
     }
 
 

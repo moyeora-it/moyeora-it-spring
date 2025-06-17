@@ -169,7 +169,7 @@ public class GroupQueryRepositoryImpl implements GroupQueryRepository{
         String status = myCondition.getStatus();
 
         OrderSpecifier<?> orderSpecifier = orderBy(condition.getSort(), condition.getOrder(), group);
-        
+
         List<String> requiredSkills = condition.getSkill();
         List<String> requiredPositions = condition.getPosition();
 
