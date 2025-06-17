@@ -169,13 +169,13 @@ public class GroupQueryRepositoryImpl implements GroupQueryRepository{
         String status = myCondition.getStatus();
 
         OrderSpecifier<?> orderSpecifier = orderBy(condition.getSort(), condition.getOrder(), group);
-        Path<?> sortPath = getSortPath(condition.getSort(), group);
+        
+        List<String> requiredSkills = condition.getSkill();
+        List<String> requiredPositions = condition.getPosition();
 
         BooleanBuilder whereBuilder = new BooleanBuilder()
                 .and(titleContains(condition.getKeyword()))
                 .and(typeEq(condition.getType()))
-                .and(skillIn(condition.getSkill()))
-                .and(positionIn(condition.getPosition()))
                 .and(cursorCondition(condition.getCursor(), condition.getOrder()));
 
         BooleanExpression joinFilter;
@@ -190,22 +190,32 @@ public class GroupQueryRepositoryImpl implements GroupQueryRepository{
             // status가 null이거나 다른 값이면 둘 다 포함
             joinFilter = waitingList.userId.eq(userId).or(participant.userId.eq(userId));
         }
-        List<Tuple> tuples = queryFactory
-                .select(group.groupId, sortPath)
+
+        BooleanExpression havingExpr = Expressions.TRUE;
+        if (requiredSkills != null && !requiredSkills.isEmpty()) {
+            havingExpr = havingExpr.and(skill.skillInfo.countDistinct().eq((long) requiredSkills.size()));
+            whereBuilder.and(skill.skillInfo.in(requiredSkills));
+        }
+        if (requiredPositions != null && !requiredPositions.isEmpty()) {
+            havingExpr = havingExpr.and(position.positionInfo.countDistinct().eq((long) requiredPositions.size()));
+            whereBuilder.and(position.positionInfo.in(requiredPositions));
+        }
+
+        List<Long> groupIds = queryFactory
+                .select(group.groupId)
                 .from(group)
                 .leftJoin(skill).on(skill.group.eq(group))
                 .leftJoin(position).on(position.group.eq(group))
                 .leftJoin(waitingList).on(waitingList.group.eq(group))
                 .leftJoin(participant).on(participant.group.eq(group))
                 .where(whereBuilder.and(joinFilter))
-                .distinct()
+                .groupBy(group.groupId)
+                .having(havingExpr)
                 .orderBy(orderSpecifier)
                 .limit(condition.getSize() + 1)
                 .fetch();
 
-        return tuples.stream()
-                .map(tuple -> tuple.get(group.groupId))
-                .toList();
+        return groupIds;
     }
 
     @Override
