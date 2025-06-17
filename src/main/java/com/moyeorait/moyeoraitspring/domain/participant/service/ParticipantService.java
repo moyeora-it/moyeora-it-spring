@@ -1,10 +1,13 @@
 package com.moyeorait.moyeoraitspring.domain.participant.service;
 
 import com.moyeorait.moyeoraitspring.commons.enumdata.NotificationType;
+import com.moyeorait.moyeoraitspring.commons.exception.CustomException;
+import com.moyeorait.moyeoraitspring.domain.group.exception.GroupException;
 import com.moyeorait.moyeoraitspring.domain.group.repository.Group;
 import com.moyeorait.moyeoraitspring.domain.participant.ParticipantRepository;
 import com.moyeorait.moyeoraitspring.domain.participant.repository.Participant;
 import com.moyeorait.moyeoraitspring.domain.user.notification.NotificationManager;
+import com.moyeorait.moyeoraitspring.domain.waitinglist.repository.WaitingListRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +21,14 @@ public class ParticipantService {
     @Autowired
     NotificationManager notificationManager;
 
+    @Autowired
+    WaitingListRepository waitingListRepository;
+
     public void addUserToGroup(Group group, Long participantUserId) {
+        if(participantRepository.findByGroupAndUserId(group, participantUserId) != null ||
+            waitingListRepository.findByGroupAndUserId(group, participantUserId) != null
+        ) throw new CustomException(GroupException.AREADY_REQUEST_USER);
+
         Long groupId = group.getGroupId();
         group.setCurrentParticipants(group.getCurrentParticipants() + 1);
         if(group.getCurrentParticipants() >= group.getMaxParticipants()) {

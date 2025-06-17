@@ -65,14 +65,14 @@ public class GroupJoinManager {
     public void manageJoinProcess(JoinManageRequest request, Long groupId, Long createUserId) {
         Group group = groupService.findById(groupId);
         if(!group.getUserId().equals(createUserId)) throw new CustomException(GroupException.USER_FORBIDDEN_ACCESS);
-
+        WaitingList waitingList = waitingListService.findByGroupAndUserId(group, request.getUserId());
+        if(waitingList == null) throw new CustomException(GroupException.PARTICIPATION_NOT_FOUND);
         if(request.getStatus().equals("approve")){
             if(group.getCurrentParticipants() >= group.getMaxParticipants())  throw new CustomException(GroupException.GROUP_CAPACITY_EXCEEDED);
             participantService.addUserToGroup(group, request.getUserId());
         }else if(request.getStatus().equals("deny")){
             participantService.denyToGroup(request.getUserId());
         }
-        WaitingList waitingList = waitingListService.findByGroupAndUserId(group, request.getUserId());
         waitingListService.deleteWaitingList(waitingList);
     }
 }
