@@ -38,7 +38,7 @@ public class GroupInfo {
 //    boolean status;
 //    Integer views;
 
-    public static GroupInfo of(Group group, List<Integer> skills, List<Integer> positions) {
+    public static GroupInfo of(Group group, List<Integer> skills, List<Integer> positions, List<UserInfo> users) {
         return GroupInfo.builder()
                 .id(group.getGroupId())
                 .title(group.getTitle())
@@ -53,6 +53,7 @@ public class GroupInfo {
                 .autoAllow(group.getAutoAllow())
                 .type(group.getType())
                 .createUserId(group.getUserId())
+                .participants(users)
 //                .currentParticipants(group.getCurrentParticipants())
 //                .status(group.getStatus())
 //                .views(group.getViews())

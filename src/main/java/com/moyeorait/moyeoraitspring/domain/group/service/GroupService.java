@@ -223,8 +223,17 @@ public class GroupService {
                     .toList();
 
             List<Integer> positionIdx = PositionEnum.createIdxList(positions);
+
+            List<Participant> users = participantRepository.findByGroup(group);
+            List<UserInfo> userList = users.stream()
+                    .map(user -> {
+                        long userId = user.getUserId();
+                        UserInfo response = userManager.findNodeUser(userId);
+                        return response;
+                    })
+                    .toList();
             // GroupInfo 생성
-            GroupInfo groupInfo = GroupInfo.of(group, skillIdx, positionIdx);
+            GroupInfo groupInfo = GroupInfo.of(group, skillIdx, positionIdx, userList);
 
             // 작성자 정보 조회
 //            UserInfo userInfo = userManager.findNodeUser(group.getUserId());
