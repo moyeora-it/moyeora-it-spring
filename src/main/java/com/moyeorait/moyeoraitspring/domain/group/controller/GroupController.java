@@ -144,6 +144,41 @@ public class GroupController {
         return ApiPageResponse.success(result.getItems(), result.isHasNext(), result.getCursor());
     }
 
+    @Operation(summary = "마이페이지 그룹조회", description = "자신이 참여하고 있는 그룹에 대해 조건을 기반으로 조회합니다.")
+    @GetMapping("/usergroup/{userId}")
+    public ApiPageResponse findUserGroups(
+            @RequestParam(required = false) String sort,
+            @RequestParam(required = false) String order,
+            @RequestParam(required = false) List<Integer> skill,
+            @RequestParam(required = false) List<Integer> position,
+            @RequestParam(required = false) String type,
+            @RequestParam(required = false) String status,
+            @RequestParam Integer size,
+            @RequestParam(required = false) Long cursor,
+            @RequestParam(required = false) String search,
+            @PathVariable Long userId
+    ){
+        List<String> skillList = SkillEnum.createStringList(skill);
+        List<String> positionList = PositionEnum.createStringList(position);
+        GroupSearchCondition condition = GroupSearchCondition.builder()
+                .sort(sort)
+                .order(order)
+                .skill(skillList)
+                .position(positionList)
+                .type(type)
+                .size(size) // hasNext판별을 위해 미리 +1
+                .cursor(cursor)
+                .keyword(search).build();
+        MyGroupSearchCondition myCondition = MyGroupSearchCondition.builder()
+                .condition(condition)
+                .status(status)
+                .userId(userId)
+                .build();
+        MyGroupSearchResponse result = groupService.searchMyGroups(myCondition);
+        return ApiPageResponse.success(result.getItems(), result.isHasNext(), result.getCursor());
+    }
+
+
     @Operation(summary = "추천 그룹 조회", description = "유저 정보를 기반으로 추천된 그룹 리스트를 반환합니다.")
     @GetMapping("/recommend")
     public ApiResponse<List<GroupInfo>> recommendGroups(){
