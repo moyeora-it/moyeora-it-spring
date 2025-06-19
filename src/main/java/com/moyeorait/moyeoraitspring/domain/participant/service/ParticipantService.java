@@ -25,9 +25,7 @@ public class ParticipantService {
     WaitingListRepository waitingListRepository;
 
     public void addUserToGroup(Group group, Long participantUserId) {
-        if(participantRepository.findByGroupAndUserId(group, participantUserId) != null ||
-            waitingListRepository.findByGroupAndUserId(group, participantUserId) != null
-        ) throw new CustomException(GroupException.AREADY_REQUEST_USER);
+        if(participantRepository.findByGroupAndUserId(group, participantUserId) != null) throw new CustomException(GroupException.AREADY_REQUEST_USER);
 
         Long groupId = group.getGroupId();
         group.setCurrentParticipants(group.getCurrentParticipants() + 1);
