@@ -3,6 +3,7 @@ package com.moyeorait.moyeoraitspring.domain.group.controller;
 import com.moyeorait.moyeoraitspring.commons.annotation.Login;
 import com.moyeorait.moyeoraitspring.commons.enumdata.PositionEnum;
 import com.moyeorait.moyeoraitspring.commons.enumdata.SkillEnum;
+import com.moyeorait.moyeoraitspring.commons.exception.CustomException;
 import com.moyeorait.moyeoraitspring.commons.response.ApiPageResponse;
 import com.moyeorait.moyeoraitspring.commons.response.ApiResponse;
 import com.moyeorait.moyeoraitspring.domain.group.GroupJoinManager;
@@ -23,6 +24,7 @@ import com.moyeorait.moyeoraitspring.domain.reply.controller.response.ReplySearc
 import com.moyeorait.moyeoraitspring.domain.reply.service.ReplyService;
 import com.moyeorait.moyeoraitspring.domain.user.dto.UserInfo;
 import com.moyeorait.moyeoraitspring.domain.user.dto.UserInfoList;
+import com.moyeorait.moyeoraitspring.domain.user.exception.UserException;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -88,6 +90,39 @@ public class GroupController {
         GroupPagingResponse result = groupService.searchGroups(condition, userId);
         return ApiPageResponse.success(result.getItems(), result.isHasNext(), result.getCursor());
     }
+
+    @Operation(summary = "북마크 그룹 조건 조회", description = "조건을 기반으로 즐겨찾기 한 그룹을 조회합니다.")
+    @GetMapping("/bookmark")
+    public ApiPageResponse findBookmarkGroups(
+            @RequestParam(required = false) String sort,
+            @RequestParam(required = false) String order,
+            @RequestParam(required = false) List<Integer> skill,
+            @RequestParam(required = false) List<Integer> position,
+            @RequestParam(required = false) String type,
+            @RequestParam(required = false) String search,
+            @RequestParam Integer size,
+            @RequestParam(required = false) Long cursor,
+            @Login(required = false) Long userId
+    ){
+        if(userId == null) throw new CustomException(UserException.USER_INFO_NOT_FOUND);
+        List<String> skillList = SkillEnum.createStringList(skill);
+        List<String> positionList = PositionEnum.createStringList(position);
+        GroupSearchCondition condition = GroupSearchCondition.builder()
+                .sort(sort)
+                .order(order)
+                .skill(skillList)
+                .position(positionList)
+                .type(type)
+                .size(size)
+                .cursor(cursor)
+                .keyword(search)
+                .bookmark(true)
+                .bookmarkUserId(userId).build();
+        log.debug("size : {}", size);
+        GroupPagingResponse result = groupService.searchGroups(condition, userId);
+        return ApiPageResponse.success(result.getItems(), result.isHasNext(), result.getCursor());
+    }
+
 
     @Operation(summary = "그룹 상세 정보 조회", description = "그룹의 상세 정보를 조회합니다.")
     @GetMapping("/{groupId}")
