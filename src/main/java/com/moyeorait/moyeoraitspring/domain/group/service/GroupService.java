@@ -80,6 +80,9 @@ public class GroupService {
 
         positionRepository.saveAll(positionEntities);
 
+        List<Long> followers = userManager.findFollowers(userId);
+        // 2025-06-19 to-do followers에 알림 요청 로직 구현
+
         return result.getGroupId();
     }
 

@@ -12,6 +12,8 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -69,6 +71,11 @@ public class UserManager {
             log.error(e.getMessage());
             throw new CustomException(UserException.USER_AUTHORIZE_EXCEPTION);
         }
+        return null;
+    }
+
+    public List<Long> findFollowers(Long userId) {
+
         return null;
     }
 }
