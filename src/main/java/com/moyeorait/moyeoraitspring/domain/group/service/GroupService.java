@@ -81,8 +81,14 @@ public class GroupService {
         positionRepository.saveAll(positionEntities);
 
         List<Long> followers = userManager.findFollowers(userId);
-        // 2025-06-19 to-do followers에 알림 요청 로직 구현
 
+        String url = String.format("/groups/%d", result.getGroupId());
+        for(Long id : followers){
+            notificationManager.sendNotification(
+                    NotificationType.FOLLOWER_CREATE_GROUP, id, url
+            );
+        }
+        log.debug("{}명의 팔로워들에게 알림을 전송하였습니다.", followers.size());
         return result.getGroupId();
     }
 

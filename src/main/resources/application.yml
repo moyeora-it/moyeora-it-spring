@@ -25,4 +25,4 @@ logging:
 
 external:
   node:
-    base-url: https://my-api.sjcpop.com/api/v1/user/
+    base-url: https://my-api.sjcpop.com/api/v1/
