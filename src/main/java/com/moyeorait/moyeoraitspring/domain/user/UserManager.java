@@ -3,6 +3,8 @@ package com.moyeorait.moyeoraitspring.domain.user;
 import com.moyeorait.moyeoraitspring.commons.exception.CustomException;
 import com.moyeorait.moyeoraitspring.commons.external.dto.NodeMyInfoResponse;
 import com.moyeorait.moyeoraitspring.commons.external.dto.NodeUserInfoResponse;
+import com.moyeorait.moyeoraitspring.domain.user.dto.FollowerInfo;
+import com.moyeorait.moyeoraitspring.domain.user.dto.NodeFollowerListResponse;
 import com.moyeorait.moyeoraitspring.domain.user.dto.UserInfo;
 import com.moyeorait.moyeoraitspring.domain.user.exception.UserException;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +13,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -23,7 +28,7 @@ public class UserManager {
     private final RestTemplate restTemplate;
 
     public UserInfo findNodeUser(Long userId){
-        String url = nodeBaseUrl + userId;
+        String url = nodeBaseUrl + "user/" + userId;
         log.debug("url : {}", url);
         ResponseEntity<NodeUserInfoResponse> response = restTemplate.exchange(
                 url,
@@ -43,7 +48,7 @@ public class UserManager {
 
     public String findUserInfoByTokenAndNode(String token) {
         log.debug("findUserOfNodeServer token:" , token);
-        String myInfoUrl = nodeBaseUrl + "info";
+        String myInfoUrl = nodeBaseUrl + "user/" + "info";
         try{
             HttpHeaders headers = new HttpHeaders();
             headers.add("Cookie", "accessToken=" + token);
@@ -70,5 +75,27 @@ public class UserManager {
             throw new CustomException(UserException.USER_AUTHORIZE_EXCEPTION);
         }
         return null;
+    }
+
+    public List<Long> findFollowers(Long userId) {
+        String url = nodeBaseUrl + "follow/" + userId + "/followers?size=100000&cursor=0";
+        log.debug("url : {}", url);
+
+        ResponseEntity<NodeFollowerListResponse> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                null,
+                NodeFollowerListResponse.class
+        );
+
+        NodeFollowerListResponse result = response.getBody();
+
+        if (result == null || !result.getStatus().isSuccess()) {
+            throw new CustomException(UserException.USER_INFO_NOT_FOUND);
+        }
+
+        return result.getItems().stream()
+                .map(FollowerInfo::getId)
+                .collect(Collectors.toList());
     }
 }

@@ -42,6 +42,7 @@ public class GroupJoinManager {
 
     public void cancelRequest(Long groupId, Long userId) {
         Group group = groupService.findById(groupId);
+        if(userId == group.getUserId()) throw new CustomException(GroupException.CANCLE_NOT_ALLOW_USER);
         Participant participant = participantService.findByGroupAndUserId(group, userId);
         WaitingList waitingList = waitingListService.findByGroupAndUserId(group, userId);
 

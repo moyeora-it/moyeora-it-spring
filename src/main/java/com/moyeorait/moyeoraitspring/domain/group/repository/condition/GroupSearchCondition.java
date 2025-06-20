@@ -21,4 +21,6 @@ public class GroupSearchCondition {
     private String order; // asc, desc
     private Integer size;
     private Long cursor;
+    private boolean bookmark;
+    private Long bookmarkUserId;
 }

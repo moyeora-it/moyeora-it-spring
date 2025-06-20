@@ -27,6 +27,8 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
+import static com.moyeorait.moyeoraitspring.domain.bookmark.repository.QBookmark.bookmark;
+
 @Repository
 @RequiredArgsConstructor
 @Slf4j
@@ -115,6 +117,11 @@ public class GroupQueryRepositoryImpl implements GroupQueryRepository{
             whereBuilder.and(position.positionInfo.in(requiredPositions));
         }
 
+        // ✅ 북마크 조건 처리
+        if (condition.isBookmark()) {
+            whereBuilder.and(bookmark.userId.eq(condition.getBookmarkUserId()));
+        }
+
         BooleanExpression havingExpr = Expressions.TRUE;
         if (requiredSkills != null && !requiredSkills.isEmpty()) {
             havingExpr = havingExpr.and(skill.skillInfo.countDistinct().eq((long) requiredSkills.size()));
@@ -128,6 +135,7 @@ public class GroupQueryRepositoryImpl implements GroupQueryRepository{
                 .from(group)
                 .join(skill).on(skill.group.eq(group))
                 .join(position).on(position.group.eq(group))
+                .leftJoin(bookmark).on(bookmark.group.eq(group))
                 .where(whereBuilder)
                 .groupBy(group.groupId)
                 .having(havingExpr)

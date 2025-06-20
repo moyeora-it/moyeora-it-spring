@@ -27,7 +27,7 @@ public class BookmarkService {
     GroupRepository groupRepository;
 
     public void updateBookmark(BookmarkRequest request, Long userId) {
-        Group findgroup = groupRepository.findById(request.getGroupId()).get();
+        Group findgroup = groupRepository.findById(request.getGroupId()).orElseThrow(() -> new NotFoundException(GroupException.GROUP_NOT_FOUND));
         log.debug("findGroup : {}", findgroup);
         log.debug("request : {}", request);
         if(request.isBookmark()){

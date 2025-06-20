@@ -10,6 +10,7 @@ public enum GroupException implements ExceptionInterface {
     USER_FORBIDDEN_ACCESS(41003, "권한이 없는 유저입니다."),
     GROUP_NOT_FOUND(404, "삭제되었거나, 존재하지 않는 그룹입니다."),
     AREADY_REQUEST_USER(41005, "이미 신청된 사용자입니다."),
+    CANCLE_NOT_ALLOW_USER(41006, "모임 생성자는 그룹탈퇴가 불가능합니다.")
     ;
 
     private final int code;
