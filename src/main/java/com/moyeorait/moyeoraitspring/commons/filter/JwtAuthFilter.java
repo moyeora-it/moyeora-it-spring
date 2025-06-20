@@ -40,8 +40,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String token = extractToken(request);
 
         if(token == null) {
-//            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            log.debug("토큰이 없습니다.");
             request.setAttribute("userId", null);
             filterChain.doFilter(request, response);
             return;
@@ -96,8 +94,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 }
             }
         }
-
-        log.debug("토큰이 없습니다. (Authorization, Cookie 모두 없음)");
         return null;
 
     }
