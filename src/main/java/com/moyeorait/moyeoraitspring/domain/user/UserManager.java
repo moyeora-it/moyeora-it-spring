@@ -29,7 +29,6 @@ public class UserManager {
 
     public UserInfo findNodeUser(Long userId){
         String url = nodeBaseUrl + "user/" + userId;
-        log.debug("url : {}", url);
         ResponseEntity<NodeUserInfoResponse> response = restTemplate.exchange(
                 url,
                 HttpMethod.GET,
@@ -79,7 +78,6 @@ public class UserManager {
 
     public List<Long> findFollowers(Long userId) {
         String url = nodeBaseUrl + "follow/" + userId + "/followers?size=100000&cursor=0";
-        log.debug("url : {}", url);
 
         ResponseEntity<NodeFollowerListResponse> response = restTemplate.exchange(
                 url,
