@@ -51,7 +51,8 @@ public class SecurityConfig {
                 "http://my.sjcpop.com/",
                 "http://www.my.sjcpop.com/",
                 "https://my.sjcpop.com/",
-                "https://www.my.sjcpop.com/"
+                "https://www.my.sjcpop.com/",
+                "https://local.sjcpop.com:3000/"
                 )); // 실제 클라이언트 도메인 지정
         config.setAllowCredentials(true); // Authorization 헤더 사용 시 true
         config.setAllowedHeaders(List.of("*")); // Authorization 포함
