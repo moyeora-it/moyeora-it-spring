@@ -55,7 +55,6 @@ public class GroupController {
         log.debug("createGroup userId : ", userId);
         Long groupId = groupService.createGroup(request, userId);
 
-        System.out.println("test");
         log.debug("request : {}", request);
 
         return ApiResponse.success(groupId);

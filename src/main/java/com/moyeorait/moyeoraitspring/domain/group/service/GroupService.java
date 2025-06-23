@@ -82,12 +82,12 @@ public class GroupService {
 
         List<Long> followers = userManager.findFollowers(userId);
 
-        String url = String.format("/groups/%d", result.getGroupId());
-        for(Long id : followers){
-            notificationManager.sendNotification(
-                    NotificationType.FOLLOWER_CREATE_GROUP, id, url
-            );
-        }
+//        String url = String.format("/groups/%d", result.getGroupId());
+//        for(Long id : followers){
+//            notificationManager.sendNotification(
+//                    NotificationType.FOLLOWER_CREATE_GROUP, id, url
+//            );
+//        }
         log.debug("{}명의 팔로워들에게 알림을 전송하였습니다.", followers.size());
         return result.getGroupId();
     }
