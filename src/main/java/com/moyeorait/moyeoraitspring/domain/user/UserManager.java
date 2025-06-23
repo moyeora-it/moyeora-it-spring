@@ -77,7 +77,7 @@ public class UserManager {
     }
 
     public List<Long> findFollowers(Long userId) {
-        String url = nodeBaseUrl + "follow/" + userId + "/followers?size=100000&cursor=0";
+        String url = nodeBaseUrl + "follow/" + userId + "/spring-followers?size=100000&cursor=0";
 
         ResponseEntity<NodeFollowerListResponse> response = restTemplate.exchange(
                 url,
