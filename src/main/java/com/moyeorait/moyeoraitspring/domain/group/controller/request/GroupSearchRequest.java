@@ -3,6 +3,7 @@ package com.moyeorait.moyeoraitspring.domain.group.controller.request;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.util.List;
