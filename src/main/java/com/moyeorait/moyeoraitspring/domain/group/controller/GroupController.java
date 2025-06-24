@@ -8,6 +8,7 @@ import com.moyeorait.moyeoraitspring.commons.response.ApiPageResponse;
 import com.moyeorait.moyeoraitspring.commons.response.ApiResponse;
 import com.moyeorait.moyeoraitspring.domain.group.GroupJoinManager;
 import com.moyeorait.moyeoraitspring.domain.group.controller.request.CreateGroupRequest;
+import com.moyeorait.moyeoraitspring.domain.group.controller.request.GroupSearchRequest;
 import com.moyeorait.moyeoraitspring.domain.group.controller.request.JoinManageRequest;
 import com.moyeorait.moyeoraitspring.domain.group.controller.response.GroupInfoJoinResponse;
 import com.moyeorait.moyeoraitspring.domain.group.controller.response.GroupPagingResponse;
@@ -29,6 +30,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -64,28 +66,22 @@ public class GroupController {
     @Operation(summary = "그룹 조건 조회", description = "조건을 기반으로 그룹을 조회합니다.")
     @GetMapping
     public ApiPageResponse findGroups(
-            @RequestParam(required = false) String sort,
-            @RequestParam(required = false) String order,
-            @RequestParam(required = false) List<Integer> skill,
-            @RequestParam(required = false) List<Integer> position,
-            @RequestParam(required = false) String type,
-            @RequestParam(required = false) String search,
-            @RequestParam Integer size,
-            @RequestParam(required = false) Long cursor,
+            @ModelAttribute @Validated GroupSearchRequest request,
             @Login(required = false) Long userId
     ){
-        List<String> skillList = SkillEnum.createStringList(skill);
-        List<String> positionList = PositionEnum.createStringList(position);
+        List<String> skillList = SkillEnum.createStringList(request.getSkill());
+        List<String> positionList = PositionEnum.createStringList(request.getPosition());
         GroupSearchCondition condition = GroupSearchCondition.builder()
-                .sort(sort)
-                .order(order)
+                .sort(request.getSort())
+                .order(request.getOrder())
                 .skill(skillList)
                 .position(positionList)
-                .type(type)
-                .size(size)
-                .cursor(cursor)
-                .keyword(search).build();
-        log.debug("size : {}", size);
+                .type(request.getType())
+                .size(request.getSize())
+                .cursor(request.getCursor())
+                .keyword(request.getSearch())
+                .build();
+
         GroupPagingResponse result = groupService.searchGroups(condition, userId);
         return ApiPageResponse.success(result.getItems(), result.isHasNext(), result.getCursor());
     }
