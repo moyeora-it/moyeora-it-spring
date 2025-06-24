@@ -69,6 +69,7 @@ public class GroupController {
             @ModelAttribute @Validated GroupSearchRequest request,
             @Login(required = false) Long userId
     ){
+        log.debug(request.toString());
         List<String> skillList = SkillEnum.createStringList(request.getSkill());
         List<String> positionList = PositionEnum.createStringList(request.getPosition());
         GroupSearchCondition condition = GroupSearchCondition.builder()
