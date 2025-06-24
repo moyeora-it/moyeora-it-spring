@@ -9,6 +9,7 @@ import java.util.List;
 
 @Getter
 @ToString
+@AllArgsConstructor
 public class GroupSearchRequest {
     private String sort;
     private String order;
