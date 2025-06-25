@@ -25,23 +25,30 @@ public class ParticipantService {
     WaitingListRepository waitingListRepository;
 
     public void addUserToGroup(Group group, Long participantUserId) {
-        if(participantRepository.findByGroupAndUserId(group, participantUserId) != null) throw new CustomException(GroupException.AREADY_REQUEST_USER);
-
-        Long groupId = group.getGroupId();
+        if(participantRepository.findByGroupAndUserId(group, participantUserId) != null) {
+            throw new CustomException(GroupException.AREADY_REQUEST_USER);
+        }
 
         group.incrementParticipants();
 
-        if(group.getCurrentParticipants() >= group.getMaxParticipants()) {
-            String url = String.format("/groups/%d", groupId);
-            notificationManager.sendNotification(NotificationType.FULL_CAPACITY, group.getUserId(), url);
-        }
         Participant participant = new Participant(group, participantUserId);
         participantRepository.save(participant);
 
-        String url = String.format("/groups/%d", groupId);
-        notificationManager.sendNotification(NotificationType.APPLY_APPROVED, participantUserId, url);
-        String url2 = String.format("/groups/%d/participants", groupId);
-        notificationManager.sendNotification(NotificationType.GROUP_HAS_PARTICIPANT, group.getUserId(), url2);
+        sendCreateGroupNotification(group, participantUserId);
+    }
+
+    private void sendCreateGroupNotification(Group group, Long participantUserId) {
+
+        Long groupId = group.getGroupId();
+        String groupUrl = "/groups/" + groupId;
+        String participantUrl = groupUrl + "/participants";
+
+        if (group.getCurrentParticipants() >= group.getMaxParticipants()) {
+            notificationManager.sendNotification(NotificationType.FULL_CAPACITY, group.getUserId(), groupUrl);
+        }
+
+        notificationManager.sendNotification(NotificationType.APPLY_APPROVED, participantUserId, groupUrl);
+        notificationManager.sendNotification(NotificationType.GROUP_HAS_PARTICIPANT, group.getUserId(), participantUrl);
 
     }
 
