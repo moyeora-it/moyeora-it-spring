@@ -28,7 +28,9 @@ public class ParticipantService {
         if(participantRepository.findByGroupAndUserId(group, participantUserId) != null) throw new CustomException(GroupException.AREADY_REQUEST_USER);
 
         Long groupId = group.getGroupId();
-        group.setCurrentParticipants(group.getCurrentParticipants() + 1);
+
+        group.incrementParticipants();
+
         if(group.getCurrentParticipants() >= group.getMaxParticipants()) {
             String url = String.format("/groups/%d", groupId);
             notificationManager.sendNotification(NotificationType.FULL_CAPACITY, group.getUserId(), url);
@@ -42,6 +44,7 @@ public class ParticipantService {
         notificationManager.sendNotification(NotificationType.GROUP_HAS_PARTICIPANT, group.getUserId(), url2);
 
     }
+
 
     public Participant findByGroupAndUserId(Group group, Long userId) {
         Participant participant = participantRepository.findByGroupAndUserId(group, userId);

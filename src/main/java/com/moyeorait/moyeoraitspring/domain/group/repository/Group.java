@@ -70,4 +70,8 @@ public class Group extends BaseTimeEntity {
         this.startDate = request.getStartDate();
         this.endDate = request.getEndDate();
     }
+
+    public void incrementParticipants() {
+        this.currentParticipants += 1;
+    }
 }
