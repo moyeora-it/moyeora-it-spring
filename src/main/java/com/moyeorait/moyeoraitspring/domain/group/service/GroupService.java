@@ -33,6 +33,7 @@ import com.moyeorait.moyeoraitspring.domain.waitinglist.repository.WaitingListRe
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -55,7 +56,7 @@ public class GroupService {
     private final BookmarkRepository bookmarkRepository;
     private final NotificationManager notificationManager;
 
-
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Long createGroup(CreateGroupRequest request, Long userId) {
         Group group = new Group(request, userId);
         Group result = groupRepository.save(group);
@@ -144,8 +145,18 @@ public class GroupService {
     }
 
     public Group findById(Long groupId) {
-        return groupRepository.findById(groupId).get();
+        return groupRepository.findById(groupId).orElseThrow(
+                () -> new CustomException(GroupException.GROUP_NOT_FOUND)
+        );
     }
+
+
+    public Group findByIdWithLock(Long groupId) {
+        return groupRepository.findByIdWithPessimisticLock(groupId).orElseThrow(
+                () -> new CustomException(GroupException.GROUP_NOT_FOUND)
+        );
+    }
+
 
     public GroupPagingResponse searchGroups(GroupSearchCondition condition, Long loginUserId) {
         List<Long> groupIds = groupQueryRepository.searchGroupIds(condition);

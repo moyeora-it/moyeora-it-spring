@@ -30,6 +30,12 @@ public class ParticipantService {
         }
 
         group.incrementParticipants();
+//        try {
+//            Thread.sleep(100); // race condition 유도
+//        } catch (InterruptedException e) {
+//            System.out.println("에러발생");
+//            throw new RuntimeException(e);
+//        }
 
         Participant participant = new Participant(group, participantUserId);
         participantRepository.save(participant);

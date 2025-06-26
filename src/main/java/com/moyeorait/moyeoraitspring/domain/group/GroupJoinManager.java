@@ -12,6 +12,8 @@ import com.moyeorait.moyeoraitspring.domain.waitinglist.service.WaitingListServi
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Slf4j
@@ -27,9 +29,10 @@ public class GroupJoinManager {
     @Autowired
     WaitingListService waitingListService;
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void joinRequest(Long groupId, Long userId) {
-        Group group = groupService.findById(groupId);
-
+//        Group group = groupService.findById(groupId);
+        Group group = groupService.findByIdWithLock(groupId);
         isGroupFull(group);
 
         if(group.getAutoAllow()){
