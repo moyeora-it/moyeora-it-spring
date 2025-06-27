@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
+@Transactional
 public class GroupJoinManager {
 
     @Autowired
@@ -29,10 +30,10 @@ public class GroupJoinManager {
     @Autowired
     WaitingListService waitingListService;
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void joinRequest(Long groupId, Long userId) {
 //        Group group = groupService.findById(groupId);
         Group group = groupService.findByIdWithLock(groupId);
+        log.debug("{}번 유저 로직 진행", userId);
         isGroupFull(group);
 
         if(group.getAutoAllow()){

@@ -8,12 +8,14 @@ import com.moyeorait.moyeoraitspring.domain.participant.ParticipantRepository;
 import com.moyeorait.moyeoraitspring.domain.participant.repository.Participant;
 import com.moyeorait.moyeoraitspring.domain.user.notification.NotificationManager;
 import com.moyeorait.moyeoraitspring.domain.waitinglist.repository.WaitingListRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
+@Slf4j
 public class ParticipantService {
     @Autowired
     ParticipantRepository participantRepository;
@@ -30,6 +32,7 @@ public class ParticipantService {
         }
 
         group.incrementParticipants();
+        log.debug("현재 참여인원 : {}", group.getCurrentParticipants());
 //        try {
 //            Thread.sleep(100); // race condition 유도
 //        } catch (InterruptedException e) {
@@ -38,7 +41,8 @@ public class ParticipantService {
 //        }
 
         Participant participant = new Participant(group, participantUserId);
-        participantRepository.save(participant);
+        Participant saveParticipant = participantRepository.save(participant);
+        log.debug("{}유저가 {}그룹에 참여하였습니다.", saveParticipant.getUserId(), saveParticipant.getGroup().getGroupId());
 
         sendCreateGroupNotification(group, participantUserId);
     }

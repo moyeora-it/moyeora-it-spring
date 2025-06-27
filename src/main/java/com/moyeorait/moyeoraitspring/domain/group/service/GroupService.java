@@ -56,13 +56,13 @@ public class GroupService {
     private final BookmarkRepository bookmarkRepository;
     private final NotificationManager notificationManager;
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Long createGroup(CreateGroupRequest request, Long userId) {
         Group group = new Group(request, userId);
         Group result = groupRepository.save(group);
 
         Participant participant = new Participant(group, userId);
-        participantRepository.save(participant);
+        Participant saveParticipant = participantRepository.save(participant);
+        log.debug("{}유저가 {}그룹에 참여하였습니다.", saveParticipant.getUserId(), saveParticipant.getGroup().getGroupId());
 
         List<String> skills = SkillEnum.createStringList(request.getSkills());
 

@@ -73,5 +73,6 @@ public class Group extends BaseTimeEntity {
 
     public void incrementParticipants() {
         this.currentParticipants += 1;
+        System.out.println("참여인원 로그 : " + this.currentParticipants);
     }
 }

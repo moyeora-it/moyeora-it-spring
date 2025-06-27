@@ -6,6 +6,7 @@ import com.moyeorait.moyeoraitspring.domain.group.service.GroupService;
 import com.moyeorait.moyeoraitspring.domain.participant.ParticipantRepository;
 import com.moyeorait.moyeoraitspring.domain.participant.repository.Participant;
 import com.moyeorait.moyeoraitspring.domain.participant.service.ParticipantService;
+import com.moyeorait.moyeoraitspring.domain.user.UserManager;
 import com.moyeorait.moyeoraitspring.domain.user.notification.NotificationManager;
 import com.moyeorait.moyeoraitspring.domain.waitinglist.service.WaitingListService;
 import jakarta.persistence.EntityManager;
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.transaction.TestTransaction;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -53,6 +55,9 @@ class GroupJoinManagerTest {
     @MockitoBean
     NotificationManager notificationManager;
 
+    @MockitoBean
+    UserManager userManager;
+
     @Test
     @DisplayName("사용자가 그룹 참여를 취소한다.")
     void cancleCandidateSuccess(){
@@ -71,9 +76,9 @@ class GroupJoinManagerTest {
                 true
         );
         Long saveGroupId = groupService.createGroup(request, userId);
-        Group savetGroup = groupService.findById(saveGroupId);
+        Group savedGroup = groupService.findById(saveGroupId);
 
-        Participant participant = new Participant(savetGroup, participantUserId);
+        Participant participant = new Participant(savedGroup, participantUserId);
         participantRepository.save(participant);
 
         entityManager.flush();
@@ -94,7 +99,7 @@ class GroupJoinManagerTest {
                 LocalDateTime.of(2025, 6, 15, 0, 0),
                 LocalDateTime.of(2025, 8, 15, 0, 0),
                 2,
-                "백엔드 중심의 스터디입니다.",
+                "스터디입니다.",
                 Arrays.asList(1, 2),
                 Arrays.asList(1, 2, 3),
                 "스터디",
@@ -103,11 +108,20 @@ class GroupJoinManagerTest {
         Long user1 = 10001L;
 
         Long saveGroupId = groupService.createGroup(request, user1);
-        Thread.sleep(100);
+
+
+        TestTransaction.flagForCommit();
+        TestTransaction.end();
+
         Group group = groupService.findById(saveGroupId);
         System.out.println("group : " +group.toString());
 
         int threadCount = 5;
+
+
+
+//        groupJoinManager.joinRequest(group.getGroupId(), 10002L);
+
         ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
         CountDownLatch latch = new CountDownLatch(threadCount);
 
@@ -115,7 +129,8 @@ class GroupJoinManagerTest {
             long userId = i+1;
             executorService.submit(() -> {
                 try{
-                    groupJoinManager.joinRequest(saveGroupId, userId);
+                    groupJoinManager.joinRequest(group.getGroupId(), userId);
+                    System.out.println( userId + "번 유저 요청 성공");
                 }catch (Exception e){
                     System.out.println("예외 발생 : " + e.getMessage());
                 } finally {
@@ -126,13 +141,18 @@ class GroupJoinManagerTest {
 
         latch.await();
 
-        entityManager.flush();
-        entityManager.clear(); // 1차 캐시 무효화
+
+        TestTransaction.start();
         // then
         Group updated = groupService.findById(saveGroupId);
+        System.out.println(updated.toString());
         List<Participant> participantList = participantRepository.findByGroup(updated);
 
-
-        assertEquals(2, updated.getCurrentParticipants()); // 최대 인원이 1명만 허용되므로
+        System.out.println("현재 currentParticipant : " + updated.getCurrentParticipants());
+        System.out.println("참여 유저 수 : "  + participantList.size());
+        for(Participant p : participantList){
+            System.out.println(p.toString());
+        }
+        assertEquals(2, updated.getCurrentParticipants());
     }
 }
