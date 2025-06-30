@@ -105,28 +105,21 @@ class GroupJoinManagerTest {
                 "스터디",
                 true
         );
-        Long user1 = 10001L;
-
-        Long saveGroupId = groupService.createGroup(request, user1);
+        Long ownerId = 10001L;
+        Long saveGroupId = groupService.createGroup(request, ownerId);
 
 
         TestTransaction.flagForCommit();
         TestTransaction.end();
 
         Group group = groupService.findById(saveGroupId);
-        System.out.println("group : " +group.toString());
 
         int threadCount = 5;
-
-
-
-//        groupJoinManager.joinRequest(group.getGroupId(), 10002L);
-
         ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
         CountDownLatch latch = new CountDownLatch(threadCount);
 
-        for(long i = 1; i <= threadCount; i++){
-            long userId = i+1;
+        for(long i = 0; i < threadCount; i++){
+            long userId = 10002L + i;
             executorService.submit(() -> {
                 try{
                     groupJoinManager.joinRequest(group.getGroupId(), userId);
@@ -139,20 +132,20 @@ class GroupJoinManagerTest {
             });
         }
 
-        latch.await();
-
+        latch.await(); // 모든 스레드 종료 대기
 
         TestTransaction.start();
+
         // then
         Group updated = groupService.findById(saveGroupId);
-        System.out.println(updated.toString());
         List<Participant> participantList = participantRepository.findByGroup(updated);
 
-        System.out.println("현재 currentParticipant : " + updated.getCurrentParticipants());
-        System.out.println("참여 유저 수 : "  + participantList.size());
+        System.out.println("최종 참여자 수: " + updated.getCurrentParticipants());
+        System.out.println("실제 참여자 수: " + participantList.size());
         for(Participant p : participantList){
             System.out.println(p.toString());
         }
         assertEquals(2, updated.getCurrentParticipants());
+        assertEquals(2, participantList.size());
     }
 }
