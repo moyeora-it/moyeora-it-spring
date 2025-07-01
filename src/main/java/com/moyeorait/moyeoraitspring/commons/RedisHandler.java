@@ -3,6 +3,7 @@ package com.moyeorait.moyeoraitspring.commons;
 import com.moyeorait.moyeoraitspring.commons.config.RedisConfigration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.ListOperations;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
 
@@ -40,5 +41,9 @@ public class RedisHandler {
             System.out.println("Redis 작업 오류 발생 :: " + e.getMessage());
             return 0;
         }
+    }
+
+    public RedisTemplate<String, Object> getRedisTemplate() {
+        return redisConfigration.redisTemplate();
     }
 }

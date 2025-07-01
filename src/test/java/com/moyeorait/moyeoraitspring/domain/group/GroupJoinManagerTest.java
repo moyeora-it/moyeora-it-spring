@@ -147,5 +147,9 @@ class GroupJoinManagerTest {
         }
         assertEquals(2, updated.getCurrentParticipants());
         assertEquals(2, participantList.size());
+
+        groupService.deleteGroupByGroupId(updated.getGroupId());
+        TestTransaction.flagForCommit();
+        TestTransaction.end();
     }
 }
