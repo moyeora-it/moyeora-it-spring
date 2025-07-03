@@ -2,15 +2,13 @@ package com.moyeorait.moyeoraitspring.domain.user.dto;
 
 import com.moyeorait.moyeoraitspring.commons.external.dto.NodeUserInfo;
 import com.moyeorait.moyeoraitspring.commons.external.dto.NodeUserInfoResponse;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.Optional;
 
 @ToString
 @Getter
+@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class UserInfo {

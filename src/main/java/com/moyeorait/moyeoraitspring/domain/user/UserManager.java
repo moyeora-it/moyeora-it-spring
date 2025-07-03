@@ -3,6 +3,7 @@ package com.moyeorait.moyeoraitspring.domain.user;
 import com.moyeorait.moyeoraitspring.commons.exception.CustomException;
 import com.moyeorait.moyeoraitspring.commons.external.dto.NodeMyInfoResponse;
 import com.moyeorait.moyeoraitspring.commons.external.dto.NodeUserInfoResponse;
+import com.moyeorait.moyeoraitspring.domain.RedisManager;
 import com.moyeorait.moyeoraitspring.domain.user.dto.FollowerInfo;
 import com.moyeorait.moyeoraitspring.domain.user.dto.NodeFollowerListResponse;
 import com.moyeorait.moyeoraitspring.domain.user.dto.UserInfo;
@@ -14,7 +15,9 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.Duration;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,8 +29,18 @@ public class UserManager {
     private String nodeBaseUrl;
 
     private final RestTemplate restTemplate;
+    private final RedisManager redisManager;
+
+    private static final Duration USER_CACHE_TTL = Duration.ofHours(1);
 
     public UserInfo findNodeUser(Long userId){
+        String redisKey = "user:" + userId;
+
+        Object cached = redisManager.getValue(redisKey);
+        if(cached instanceof UserInfo userInfo) {
+            return userInfo;
+        }
+
         String url = nodeBaseUrl + "user/" + userId;
         ResponseEntity<NodeUserInfoResponse> response = restTemplate.exchange(
                 url,
@@ -42,6 +55,9 @@ public class UserManager {
         }
         log.debug("result : {}", result);
         UserInfo userInfo = UserInfo.of(result, userId);
+
+        redisManager.saveValueWithTTL(redisKey, userInfo, USER_CACHE_TTL);
+
         return userInfo;
     }
 
@@ -61,7 +77,7 @@ public class UserManager {
                     NodeMyInfoResponse.class
             );
             NodeMyInfoResponse result = response.getBody();
-            log.debug("result : {}", result);
+//            log.debug("result : {}", result);
 
             if(response.getStatusCode() == HttpStatus.OK && response.getBody() != null){
                 String userId = response.getBody().getItems().getItems().getId();

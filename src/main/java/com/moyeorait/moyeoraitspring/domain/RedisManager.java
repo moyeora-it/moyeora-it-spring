@@ -1,8 +1,11 @@
 package com.moyeorait.moyeoraitspring.domain;
 
 import com.moyeorait.moyeoraitspring.commons.RedisHandler;
+import com.moyeorait.moyeoraitspring.domain.user.dto.UserInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.time.Duration;
 
 @Service
 @RequiredArgsConstructor
@@ -33,5 +36,11 @@ public class RedisManager {
 
     public Object popFromList(String key) {
         return redisHandler.getListOperations().leftPop(key);
+    }
+
+    public void saveValueWithTTL(String key, UserInfo value, Duration ttl) {
+        redisHandler.executeOperation(() ->
+                redisHandler.getValueOperations().set(key, value, ttl)
+        );
     }
 }
