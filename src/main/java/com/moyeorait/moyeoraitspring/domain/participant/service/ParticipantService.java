@@ -33,12 +33,7 @@ public class ParticipantService {
 
         group.incrementParticipants();
         log.debug("현재 참여인원 : {}", group.getCurrentParticipants());
-//        try {
-//            Thread.sleep(100); // race condition 유도
-//        } catch (InterruptedException e) {
-//            System.out.println("에러발생");
-//            throw new RuntimeException(e);
-//        }
+
 
         Participant participant = new Participant(group, participantUserId);
         Participant saveParticipant = participantRepository.save(participant);
